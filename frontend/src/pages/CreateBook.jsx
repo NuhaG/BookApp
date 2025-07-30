@@ -29,10 +29,6 @@ const CreateBook = () => {
 
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
-      <div className="mb-4">
-        <BackButton />
-      </div>
-
       <h1 className="text-3xl font-bold text-teal-400 mb-6 text-center md:text-left">
         Create Book
       </h1>
@@ -82,6 +78,9 @@ const CreateBook = () => {
         >
           Save
         </button>
+        <div className="m-4">
+          <BackButton />
+        </div>
       </div>
     </div>
   );

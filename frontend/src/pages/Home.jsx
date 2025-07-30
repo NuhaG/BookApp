@@ -2,13 +2,20 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Loader from '../components/Loader';
 import { Link } from 'react-router-dom';
-import { AiOutlineEdit } from 'react-icons/ai';
-import { BsInfoCircle } from 'react-icons/bs';
-import { MdOutlineAddBox, MdOutlineDelete } from 'react-icons/md';
+import { MdAdd } from 'react-icons/md';
+import Table from '../components/home/table';
+import Card from '../components/home/card';
 
 const Home = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [show, setShow] = useState('table');
+
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setShow('card');
+    }
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -26,65 +33,42 @@ const Home = () => {
 
   return (
     <div className="selection:bg-teal-900 text-center p-5 min-h-screen bg-gradient-to-b from-teal-300 via-violet-500 to-teal-300">
-      <div className="p-5 flex items-center text-2xl justify-between bg-gray-900 text-teal-300 rounded-md">
-        <h1>Books App</h1>
-        <Link to="/books/create" className="flex items-center gap-2 hover:text-teal-400">
-          <MdOutlineAddBox size={29} /> <span>Add Book</span>
-        </Link>
+      <div className="p-5 flex flex-col md:flex-row items-center md:justify-between gap-4 bg-gray-900 text-teal-300 rounded-md">
+        <h1 className="text-2xl">Books App</h1>
+        <div className="flex gap-4 flex-wrap justify-center">
+          <div className="hidden md:flex gap-4">
+            <button
+              onClick={() => setShow('table')}
+              className={`px-4 py-2 rounded-md ${show === 'table' ? 'bg-teal-500 text-white' : 'bg-gray-700 hover:bg-gray-600'
+                }`}
+            >
+              Table View
+            </button>
+            <button
+              onClick={() => setShow('card')}
+              className={`px-4 py-2 rounded-md ${show === 'card' ? 'bg-teal-500 text-white' : 'bg-gray-700 hover:bg-gray-600'
+                }`}
+            >
+              Card View
+            </button>
+          </div>
+
+          <Link to="/books/create" className="flex items-center gap-2 hover:text-teal-400">
+            <MdAdd size={29} /> <span>Add Book</span>
+          </Link>
+        </div>
       </div>
 
+      {/* Content */}
       {loading ? (
         <Loader />
-      ) : (
-        <table className="w-full border border-gray-700 rounded-lg overflow-hidden mt-4">
-          <thead className="bg-gray-800 text-teal-300">
-            <tr>
-              <th className="p-4 border-b border-gray-700">#</th>
-              <th className="p-4 border-b border-gray-700">Title</th>
-              <th className="p-4 border-b border-gray-700">Author</th>
-              <th className="p-4 border-b border-gray-700">Year</th>
-              <th className="p-4 border-b border-gray-700">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-gray-900 text-gray-200">
-            {books.length > 0 ? (
-              books.map((book, index) => (
-                <tr
-                  key={book._id}
-                  className="hover:bg-gray-800 transition border-b border-gray-700"
-                >
-                  <td className="p-4">{index + 1}</td>
-                  <td className="p-4">{book.title}</td>
-                  <td className="p-4">{book.author}</td>
-                  <td className="p-4">{book.publishedYear}</td>
-                  <td className="p-4">
-                    <div className="flex flex-row justify-center gap-4 text-teal-400">
-                      <Link to={`/books/details/${book._id}`} className="hover:text-teal-300">
-                        <BsInfoCircle size={20} />
-                      </Link>
-                      <Link to={`/books/edit/${book._id}`} className="hover:text-teal-300">
-                        <AiOutlineEdit size={20} />
-                      </Link>
-                      <Link to={`/books/delete/${book._id}`} className="hover:text-red-400">
-                        <MdOutlineDelete size={20} />
-                      </Link>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5" className="py-6 text-center text-teal-300">
-                  No books available.{' '}
-                  <Link to="/books/create" className="underline hover:text-teal-400">
-                    Add one now
-                  </Link>.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      )}
+      ) : window.innerWidth < 768 ?
+        <Card books={books} /> :
+        show === 'table' ? (
+          <Table books={books} />
+        ) : (
+          <Card books={books} />
+        )}
     </div>
   );
 };
