@@ -1,13 +1,16 @@
 require("dotenv").config({ path: __dirname + "/.env", override: true });
 const express = require("express");
+
 const app = express();
 const mongoose = require("mongoose");
 const PORT = process.env.PORT || 5555;
 const booksRoute = require("./routes/booksRoute");
 const cors = require("cors");
+const errorHandler = require("./middleware/errorHandler");
 
 app.use(express.json());
 app.use(cors());
+app.use(errorHandler);
 
 app.get("/", (req, res) => {
   res.status(200).json({ success: true, message: "Welcome to Book Store" });
