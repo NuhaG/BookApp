@@ -1,6 +1,7 @@
-# Books App (MERN)
+# MERN Books App 
 
-A simple MERN (MongoDB, Express, React, Node.js) application for managing books. This app allows users to create, view, edit, and delete books with basic details (Title, Author, Year).
+-A simple MERN (MongoDB, Express, React, Node.js) application for managing books.  
+-This app allows users to create, view, edit, and delete books with basic details (Title, Author, Year).
 
 ---
 
