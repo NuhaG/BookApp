@@ -2,6 +2,8 @@ require("dotenv").config({ path: __dirname + "/.env", override: true });
 const express = require("express");
 
 const app = express();
+app.set("query parser", "extended");
+
 const mongoose = require("mongoose");
 const PORT = process.env.PORT || 5555;
 const booksRoute = require("./routes/booksRoute");

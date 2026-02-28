@@ -19,8 +19,51 @@ const createBook = asyncHandler(async (req, res) => {
 });
 
 const getBooks = asyncHandler(async (req, res) => {
-  const books = await Book.find();
-  res.status(200).json({ success: true, books });
+  // simple query
+  const queryObj = { ...req.query };
+  const excludedFields = ["page", "sort", "limit", "fields"];
+  excludedFields.forEach((el) => delete queryObj[el]);
+  // let query = Book.find(queryObj);
+
+  // adv query
+  let queryString = JSON.stringify(queryObj);
+  queryString = queryString.replace(
+    /\b(gte|gt|lte|lt)\b/g,
+    (match) => `$${match}`,
+  );
+  let query = Book.find(JSON.parse(queryString));
+
+  // sorting
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(",").join(" ");
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort("-createdAt");
+  }
+
+  // field limiting
+  if (req.query.fields) {
+    const fields = req.query.fields.split(",").join(" ");
+    query = query.select(fields);
+  } else {
+    query = query.select("-__v");
+  }
+
+  // pagination
+  const page = req.query.page * 1 || 1;
+  const limit = req.query.limit * 1 || 100;
+  const skip = (page - 1) * limit;
+
+  if(req.query.page) {
+    const numBooks = await Book.countDocuments();
+    if(skip >= numBooks) throw new Error('This Page Does not exist!');
+
+    query = query.skip(skip).limit(limit);
+  }
+
+  const books = await query;
+
+  res.status(200).json({ success: true,count: books.length, books });
 });
 
 const getBook = asyncHandler(async (req, res) => {
