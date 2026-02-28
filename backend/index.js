@@ -12,12 +12,12 @@ const errorHandler = require("./middleware/errorHandler");
 
 app.use(express.json());
 app.use(cors());
-app.use(errorHandler);
 
 app.get("/", (req, res) => {
   res.status(200).json({ success: true, message: "Welcome to Book Store" });
 });
 app.use("/books", booksRoute);
+app.use(errorHandler);
 
 mongoose
   .connect(process.env.MONGO_URI, { dbName: "books" })
