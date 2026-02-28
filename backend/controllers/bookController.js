@@ -31,8 +31,6 @@ const getBooks = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     results: books.length,
-    page,
-    limit,
     data: { books },
   });
 });
