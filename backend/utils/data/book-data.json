@@ -1,0 +1,252 @@
+[
+  {
+    "title": "Harry Potter and the Sorcerer's Stone",
+    "author": "J.K. Rowling",
+    "description": "A young boy discovers he is a wizard and begins his magical education at Hogwarts.",
+    "genre": ["fantasy", "young-adult", "adventure"],
+    "publishedYear": 1997,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.8,
+    "ratingsQuantity": 12500
+  },
+  {
+    "title": "The Hobbit",
+    "author": "J.R.R. Tolkien",
+    "description": "Bilbo Baggins embarks on an unexpected journey to help dwarves reclaim their homeland.",
+    "genre": ["fantasy", "adventure"],
+    "publishedYear": 1937,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.7,
+    "ratingsQuantity": 9800
+  },
+  {
+    "title": "1984",
+    "author": "George Orwell",
+    "description": "A dystopian novel about surveillance, control, and totalitarian government.",
+    "genre": ["fiction", "science-fiction"],
+    "publishedYear": 1949,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.6,
+    "ratingsQuantity": 8700
+  },
+  {
+    "title": "To Kill a Mockingbird",
+    "author": "Harper Lee",
+    "description": "A story about justice and racial inequality in the American South.",
+    "genre": ["fiction", "historical-fiction"],
+    "publishedYear": 1960,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.8,
+    "ratingsQuantity": 9100
+  },
+  {
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "description": "A portrayal of wealth, love, and the American dream in the 1920s.",
+    "genre": ["fiction", "historical-fiction"],
+    "publishedYear": 1925,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.2,
+    "ratingsQuantity": 7000
+  },
+  {
+    "title": "The Da Vinci Code",
+    "author": "Dan Brown",
+    "description": "A mystery thriller involving secret societies and hidden religious history.",
+    "genre": ["thriller", "mystery"],
+    "publishedYear": 2003,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.3,
+    "ratingsQuantity": 8200
+  },
+  {
+    "title": "The Alchemist",
+    "author": "Paulo Coelho",
+    "description": "A philosophical novel about following dreams and destiny.",
+    "genre": ["fiction", "philosophy"],
+    "publishedYear": 1988,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.4,
+    "ratingsQuantity": 9600
+  },
+  {
+    "title": "Atomic Habits",
+    "author": "James Clear",
+    "description": "A guide to building good habits and breaking bad ones using small changes.",
+    "genre": ["self-help", "psychology", "business"],
+    "publishedYear": 2018,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.9,
+    "ratingsQuantity": 14000
+  },
+  {
+    "title": "Sapiens",
+    "author": "Yuval Noah Harari",
+    "description": "A brief history of humankind exploring culture, science, and civilization.",
+    "genre": ["history", "science", "non-fiction"],
+    "publishedYear": 2011,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.7,
+    "ratingsQuantity": 10300
+  },
+  {
+    "title": "Dune",
+    "author": "Frank Herbert",
+    "description": "A science fiction epic about politics, religion, and survival on a desert planet.",
+    "genre": ["science-fiction", "adventure"],
+    "publishedYear": 1965,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.6,
+    "ratingsQuantity": 8500
+  },
+  {
+    "title": "The Catcher in the Rye",
+    "author": "J.D. Salinger",
+    "description": "A coming-of-age novel exploring teenage alienation and identity.",
+    "genre": ["fiction", "young-adult"],
+    "publishedYear": 1951,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.1,
+    "ratingsQuantity": 6200
+  },
+  {
+    "title": "The Silent Patient",
+    "author": "Alex Michaelides",
+    "description": "A psychological thriller about a woman who stops speaking after committing murder.",
+    "genre": ["thriller", "mystery"],
+    "publishedYear": 2019,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.5,
+    "ratingsQuantity": 7300
+  },
+  {
+    "title": "Educated",
+    "author": "Tara Westover",
+    "description": "A memoir about growing up in a strict household and pursuing education.",
+    "genre": ["memoir", "non-fiction"],
+    "publishedYear": 2018,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.7,
+    "ratingsQuantity": 6800
+  },
+  {
+    "title": "The Shining",
+    "author": "Stephen King",
+    "description": "A horror novel about isolation and supernatural forces in a haunted hotel.",
+    "genre": ["horror", "thriller"],
+    "publishedYear": 1977,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.5,
+    "ratingsQuantity": 7200
+  },
+  {
+    "title": "The Martian",
+    "author": "Andy Weir",
+    "description": "An astronaut stranded on Mars struggles to survive using science and ingenuity.",
+    "genre": ["science-fiction", "adventure"],
+    "publishedYear": 2011,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.7,
+    "ratingsQuantity": 8900
+  },
+  {
+    "title": "Thinking, Fast and Slow",
+    "author": "Daniel Kahneman",
+    "description": "Explores how humans make decisions and the psychology behind thinking.",
+    "genre": ["psychology", "science", "non-fiction"],
+    "publishedYear": 2011,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.6,
+    "ratingsQuantity": 6500
+  },
+  {
+    "title": "The Lean Startup",
+    "author": "Eric Ries",
+    "description": "A guide for entrepreneurs on building startups using iterative product development.",
+    "genre": ["business", "technology"],
+    "publishedYear": 2011,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.4,
+    "ratingsQuantity": 5400
+  },
+  {
+    "title": "Steve Jobs",
+    "author": "Walter Isaacson",
+    "description": "A biography of Apple's co-founder based on extensive interviews.",
+    "genre": ["biography", "business"],
+    "publishedYear": 2011,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.6,
+    "ratingsQuantity": 6000
+  },
+  {
+    "title": "The Psychology of Money",
+    "author": "Morgan Housel",
+    "description": "Insights on wealth, greed, and happiness through behavioral finance.",
+    "genre": ["business", "psychology"],
+    "publishedYear": 2020,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.8,
+    "ratingsQuantity": 7800
+  },
+  {
+    "title": "Rich Dad Poor Dad",
+    "author": "Robert Kiyosaki",
+    "description": "Personal finance lessons contrasting two mindsets about money.",
+    "genre": ["business", "self-help"],
+    "publishedYear": 1997,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.3,
+    "ratingsQuantity": 9100
+  },
+  {
+    "title": "The Girl with the Dragon Tattoo",
+    "author": "Stieg Larsson",
+    "description": "A journalist and hacker investigate a decades-old disappearance.",
+    "genre": ["mystery", "thriller"],
+    "publishedYear": 2005,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.4,
+    "ratingsQuantity": 6900
+  },
+  {
+    "title": "Percy Jackson and the Lightning Thief",
+    "author": "Rick Riordan",
+    "description": "A boy discovers he is the son of a Greek god and enters a mythological adventure.",
+    "genre": ["fantasy", "young-adult", "adventure"],
+    "publishedYear": 2005,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.7,
+    "ratingsQuantity": 8700
+  },
+  {
+    "title": "Frankenstein",
+    "author": "Mary Shelley",
+    "description": "A scientist creates life with tragic consequences.",
+    "genre": ["horror", "science-fiction"],
+    "publishedYear": 1818,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.2,
+    "ratingsQuantity": 5500
+  },
+  {
+    "title": "The Road",
+    "author": "Cormac McCarthy",
+    "description": "A father and son struggle to survive in a post-apocalyptic world.",
+    "genre": ["fiction", "science-fiction"],
+    "publishedYear": 2006,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.3,
+    "ratingsQuantity": 5100
+  },
+  {
+    "title": "A Brief History of Time",
+    "author": "Stephen Hawking",
+    "description": "An accessible explanation of cosmology, black holes, and the universe.",
+    "genre": ["science", "non-fiction"],
+    "publishedYear": 1988,
+    "coverImg": "default-book.jpg",
+    "ratingsAverage": 4.6,
+    "ratingsQuantity": 6200
+  }
+]

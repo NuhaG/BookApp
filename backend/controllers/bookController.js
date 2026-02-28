@@ -54,16 +54,27 @@ const getBooks = asyncHandler(async (req, res) => {
   const limit = req.query.limit * 1 || 100;
   const skip = (page - 1) * limit;
 
-  if(req.query.page) {
+  if (req.query.page) {
     const numBooks = await Book.countDocuments();
-    if(skip >= numBooks) throw new Error('This Page Does not exist!');
+    if (skip >= numBooks) {
+      return res.status(404).json({
+        success: false,
+        message: "This page does not exist",
+      });
+    }
 
     query = query.skip(skip).limit(limit);
   }
 
   const books = await query;
 
-  res.status(200).json({ success: true,count: books.length, books });
+  res.status(200).json({
+    success: true,
+    results: books.length,
+    page,
+    limit,
+    data: books,
+  });
 });
 
 const getBook = asyncHandler(async (req, res) => {
