@@ -8,14 +8,14 @@ const {
   deleteBook,
 } = require("../controllers/bookController");
 
-// nested review route
+// review for nested routes /books/:bid/reviews
 const reviewRouter = require("./reviewRoute");
 const reviewController = require("../controllers/reviewController");
 router.use("/:bookId/reviews", reviewRouter);
 
+// trending books based on review data
 router.get("/trending", reviewController.getTrendingBooks);
 
-// book routes
 router.post("/", createBook);
 router.get("/", getBooks);
 router.get("/:id", getBook);

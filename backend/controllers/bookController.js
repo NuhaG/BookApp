@@ -1,8 +1,10 @@
 const Book = require("../models/bookModel");
 const asyncHandler = require("../utils/asyncHandler");
 
+// utility for filter, sort, field limit, paginate from query params
 const APIFeatures = require("../utils/apiFeatures");
 
+// create new book
 const createBook = asyncHandler(async (req, res) => {
   const { title, author, publishedYear } = req.body;
 
@@ -20,12 +22,15 @@ const createBook = asyncHandler(async (req, res) => {
   });
 });
 
+// get all books (query param features)
 const getBooks = asyncHandler(async (req, res) => {
+  // build query by chaning api feature func
   const features = new APIFeatures(Book.find(), req.query)
     .filter()
     .sort()
     .limitFields()
     .paginate();
+
   const books = await features.query;
 
   res.status(200).json({
@@ -35,6 +40,7 @@ const getBooks = asyncHandler(async (req, res) => {
   });
 });
 
+// get one book
 const getBook = asyncHandler(async (req, res) => {
   const book = await Book.findById(req.params.id);
 
@@ -46,6 +52,7 @@ const getBook = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, book });
 });
 
+// patch a book
 const updateBook = asyncHandler(async (req, res) => {
   const { title, author, publishedYear } = req.body;
 
@@ -71,6 +78,7 @@ const updateBook = asyncHandler(async (req, res) => {
   });
 });
 
+// delete a book
 const deleteBook = asyncHandler(async (req, res) => {
   const book = await Book.findByIdAndDelete(req.params.id);
 

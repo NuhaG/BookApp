@@ -1,16 +1,19 @@
 const express = require("express");
 const reviewController = require("../controllers/reviewController");
 
-// mergeParams allows us to access :bookId from the parent router
-const router = express.Router({ mergeParams: true });
+// merge params allow access of bookid from parent
+const router = express.Router({ mergeParams: true }); 
 
-router.get('/review-stats', reviewController.getReviewStats);
+// analytics for grouped stats
+router.get('/review-stats', reviewController.getReviewStats); 
 
+// create and display all
 router
   .route("/")
   .get(reviewController.getAllReviews)
   .post(reviewController.createReview);
 
+// delete and update one
 router
   .route("/:id")
   .delete(reviewController.deleteReview)

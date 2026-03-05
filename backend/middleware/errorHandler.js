@@ -1,6 +1,5 @@
 const errorHandler = (err, req, res, next) => {
-  console.error(err);
-
+  // fallback to 500
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
 
   res.status(statusCode).json({

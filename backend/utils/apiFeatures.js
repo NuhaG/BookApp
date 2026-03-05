@@ -1,14 +1,18 @@
+// helper class to applky common api query features
 class APIFeatures {
+  // store the base query, and req query str
   constructor(query, queryString) {
     this.query = query;
     this.queryString = queryString;
   }
 
+  // apply filtering and remove reserved params
   filter() {
     const queryObj = { ...this.queryString };
     const excludedFields = ["page", "sort", "limit", "fields"];
     excludedFields.forEach((el) => delete queryObj[el]);
 
+    // convert comparision operators to mongo syntax ([gte] -> $gte)
     let queryString = JSON.stringify(queryObj);
     queryString = queryString.replace(
       /\b(gte|gt|lte|lt)\b/g,
@@ -19,6 +23,7 @@ class APIFeatures {
     return this;
   }
 
+  // apply sorting from query str, default by created at (newest first)
   sort() {
     if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split(",").join(" ");
@@ -30,6 +35,7 @@ class APIFeatures {
     return this;
   }
 
+  // send req fields or exclude __v
   limitFields() {
     if (this.queryString.fields) {
       const fields = this.queryString.fields.split(",").join(" ");
@@ -41,6 +47,7 @@ class APIFeatures {
     return this;
   }
 
+  // page and limit
   paginate() {
     const page = this.queryString.page * 1 || 1;
     const limit = this.queryString.limit * 1 || 100;

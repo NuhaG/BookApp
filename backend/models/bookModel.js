@@ -66,10 +66,12 @@ const bookSchema = mongoose.Schema(
       type: String,
       default: "default-book.jpg",
     },
+    // ref to book owner
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    // cache avg rating
     ratingsAverage: {
       type: Number,
       default: 0,
@@ -77,6 +79,7 @@ const bookSchema = mongoose.Schema(
       max: 5,
       set: (val) => Math.round(val * 10) / 10,
     },
+    // cache no of ratings
     ratingsQuantity: {
       type: Number,
       default: 0,

@@ -14,11 +14,13 @@ const reviewSchema = new mongoose.Schema(
       max: 5,
       required: [true, "A review must have a rating!"],
     },
+    // FK to book
     book: {
       type: mongoose.Schema.ObjectId,
       ref: "Book",
       required: [true, "Review must belong to a book."],
     },
+    // FK to review user
     user: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -31,6 +33,7 @@ const reviewSchema = new mongoose.Schema(
     },
   },
   {
+    // track createdAt, updatedAt along with virtuals(not reflected in the db)
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
@@ -45,7 +48,7 @@ reviewSchema.pre(/^find/, function (next) {
   // filters inapp rev and never renders them on client side
   this.find({ inappropriate: { $ne: true } });
 
-  // performance tracking
+  // Performance timing marker (can be used for diagnostics/logging).
   this.start = Date.now();
   next();
 });
@@ -59,8 +62,10 @@ reviewSchema.pre("aggregate", function (next) {
 
 // static methods - use static as we need to call it on a model
 reviewSchema.statics.calcAverageRatings = async function (bookId) {
+  // recalc rating metrics for a book
   const stats = await this.aggregate([
-    { $match: { book: bookId } }, // look for avgRev for this book
+    // avgRev for this book
+    { $match: { book: bookId } },
     {
       $group: {
         _id: "$book",
@@ -72,6 +77,7 @@ reviewSchema.statics.calcAverageRatings = async function (bookId) {
 
   // persist
   if (stats.length > 0) {
+    // save values when reviews exist
     await Book.findByIdAndUpdate(bookId, {
       ratingsQuantity: stats[0].nRating,
       ratingsAverage: stats[0].avgRating,
