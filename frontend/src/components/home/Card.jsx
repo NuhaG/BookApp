@@ -21,6 +21,25 @@ const Card = ({ books }) => {
                             <h2 className="text-xl font-semibold text-teal-300">{book.title}</h2>
                             <p className="text-gray-400 mt-1">Author: {book.author}</p>
                             <p className="text-gray-400 text-sm mt-1">Year: {book.publishedYear}</p>
+                            <p className="text-gray-400 text-sm mt-1">
+                                Rating:{" "}
+                                {typeof book.ratingsAverage === "number"
+                                    ? book.ratingsAverage.toFixed(1)
+                                    : book.ratingsAverage || "-"}
+                                {" "}({book.ratingsQuantity ?? 0})
+                            </p>
+                            {Array.isArray(book.genre) && book.genre.length > 0 ? (
+                                <div className="mt-2 flex flex-wrap gap-2">
+                                    {book.genre.slice(0, 3).map((g) => (
+                                        <span
+                                            key={g}
+                                            className="text-xs px-2 py-1 rounded-full bg-gray-900 border border-gray-700 text-teal-200"
+                                        >
+                                            {g}
+                                        </span>
+                                    ))}
+                                </div>
+                            ) : null}
                         </div>
                         <div className="flex justify-end gap-4 text-teal-400 mt-4">
                             <button

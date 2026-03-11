@@ -13,7 +13,14 @@ const createBook = asyncHandler(async (req, res) => {
     throw new Error("title, author, publishedYear are required");
   }
 
-  const newBook = await Book.create({ title, author, publishedYear });
+  // createdBy is set from the authenticated user (not trusted from client).
+  const newBook = await Book.create({
+    ...req.body,
+    title,
+    author,
+    publishedYear,
+    createdBy: req.user?._id,
+  });
 
   res.status(201).json({
     success: true,
@@ -54,9 +61,7 @@ const getBook = asyncHandler(async (req, res) => {
 
 // patch a book
 const updateBook = asyncHandler(async (req, res) => {
-  const { title, author, publishedYear } = req.body;
-
-  if (!title && !author && !publishedYear) {
+  if (!req.body || Object.keys(req.body).length === 0) {
     res.status(400);
     throw new Error("At least one field is required to update");
   }

@@ -1,59 +1,89 @@
 import React, { useState, useEffect } from 'react';
-import BackButton from '../components/backButton';
+import BackButton from '../components/BackButton';
 import Loader from '../components/Loader';
-import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { api, getApiErrorMessage } from '../api/client';
+import { getToken } from '../utils/session';
+import { GENRES } from '../utils/genres';
+import NavBar from '../components/NavBar';
 
 const EditBook = () => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [publishedYear, setPublishedYear] = useState('');
+  const [description, setDescription] = useState('');
+  const [coverImg, setCoverImg] = useState('');
+  const [genre, setGenre] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams()
 
   useEffect(() => {
+    if (!getToken()) {
+      navigate('/login', { replace: true, state: { from: location.pathname } });
+      return;
+    }
+
     setLoading(true);
-    axios.get(`http://localhost:5555/books/${id}`).then(res => {
+    api.get(`/books/${id}`).then(res => {
       setAuthor(res.data.book.author);
       setTitle(res.data.book.title);
       setPublishedYear(res.data.book.publishedYear);
+      setDescription(res.data.book.description || "");
+      setCoverImg(res.data.book.coverImg || "");
+      setGenre(Array.isArray(res.data.book.genre) ? res.data.book.genre : []);
       setLoading(false);
     }).catch(err => {
       console.log(err);
-      alert('An Error Occurred while Editing the book.');
+      alert(getApiErrorMessage(err, 'An error occurred while loading the book.'));
       setLoading(false);
     });
-  }, []);
+  }, [id, location.pathname, navigate]);
 
   const handleEditBook = () => {
-    const data = { title, author, publishedYear };
+    if (!getToken()) {
+      navigate('/login', { replace: true, state: { from: location.pathname } });
+      return;
+    }
+
+    const year = Number(publishedYear);
+    const data = {
+      title,
+      author,
+      publishedYear: Number.isNaN(year) ? publishedYear : year,
+      description,
+      coverImg,
+      genre,
+    };
     setLoading(true);
-    axios
-      .patch(`http://localhost:5555/books/${id}`, data)
+    api
+      .patch(`/books/${id}`, data)
       .then(() => {
         setLoading(false);
         navigate('/');
       })
       .catch((err) => {
         setLoading(false);
-        alert('An Error Occurred while Saving the book.');
+        alert(getApiErrorMessage(err, 'An error occurred while saving the book.'));
         console.log(err);
       });
   };
 
   return (
-    <div className="p-6 min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
-      <h1 className="text-3xl font-bold text-teal-400 mb-6 text-center md:text-left">
-        Edit Book
-      </h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+      <NavBar />
+      <div className="max-w-6xl mx-auto p-6">
+        <h1 className="text-3xl font-bold text-teal-400 mb-6 text-center md:text-left">
+          Edit Book
+        </h1>
 
-      {loading ? (
-        <div className="flex justify-center mb-4">
-          <Loader />
-        </div>
-      ) : (
-        <div className="max-w-md mx-auto bg-gray-800 p-6 rounded-lg shadow-lg border border-teal-500">
+        {loading ? (
+          <div className="flex justify-center mb-4">
+            <Loader />
+          </div>
+        ) : (
+          <div className="max-w-md mx-auto bg-gray-800 p-6 rounded-lg shadow-lg border border-teal-500">
           <div className="flex flex-col gap-4">
             <label className="text-sm text-gray-300">
               Title
@@ -84,6 +114,44 @@ const EditBook = () => {
                 className="mt-1 w-full p-2 rounded-md bg-gray-900 border border-gray-700 focus:border-teal-400 focus:outline-none"
               />
             </label>
+
+            <label className="text-sm text-gray-300">
+              Description (optional)
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={3}
+                className="mt-1 w-full p-2 rounded-md bg-gray-900 border border-gray-700 focus:border-teal-400 focus:outline-none"
+              />
+            </label>
+
+            <label className="text-sm text-gray-300">
+              Cover image URL (optional)
+              <input
+                type="text"
+                value={coverImg}
+                onChange={(e) => setCoverImg(e.target.value)}
+                className="mt-1 w-full p-2 rounded-md bg-gray-900 border border-gray-700 focus:border-teal-400 focus:outline-none"
+                placeholder="https://..."
+              />
+            </label>
+
+            <label className="text-sm text-gray-300">
+              Genres (optional)
+              <select
+                multiple
+                value={genre}
+                onChange={(e) => setGenre(Array.from(e.target.selectedOptions).map((o) => o.value))}
+                className="mt-1 w-full p-2 rounded-md bg-gray-900 border border-gray-700 focus:border-teal-400 focus:outline-none"
+              >
+                {GENRES.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-gray-400 mt-1">Hold Ctrl/Cmd to select multiple.</p>
+            </label>
           </div>
 
           <button
@@ -95,8 +163,9 @@ const EditBook = () => {
           <div className="mb-3 mt-4">
             <BackButton />
           </div>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -27,13 +27,30 @@ const BookModel = ({ book, onClose }) => {
                     <BiUserCircle size={20} /> Author: {book.author}
                 </p>
                 <p className="text-gray-500 text-sm mt-2">Year: {book.publishedYear}</p>
+                <p className="text-gray-500 text-sm mt-2">
+                    Rating:{" "}
+                    {typeof book.ratingsAverage === "number"
+                        ? book.ratingsAverage.toFixed(1)
+                        : book.ratingsAverage || "-"}{" "}
+                    ({book.ratingsQuantity ?? 0})
+                </p>
+                {Array.isArray(book.genre) && book.genre.length > 0 ? (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                        {book.genre.map((g) => (
+                            <span
+                                key={g}
+                                className="text-xs px-2 py-1 rounded-full bg-black/30 border border-gray-700 text-teal-200"
+                            >
+                                {g}
+                            </span>
+                        ))}
+                    </div>
+                ) : null}
 
                 <div className="mt-5">
                     <h3 className="text-lg font-semibold text-teal-300 mb-2">Description:</h3>
                     <p className="text-gray-300 text-sm leading-relaxed">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit numquam eveniet
-                        quisquam nam libero tempora dolorum quam reprehenderit nisi ex. Quia, esse.
-                        Excepturi sapiente neque magnam sit dolores incidunt officiis!
+                        {book.description ? book.description : "No description provided."}
                     </p>
                 </div>
             </div>

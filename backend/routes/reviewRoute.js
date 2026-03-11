@@ -1,5 +1,7 @@
 const express = require("express");
 const reviewController = require("../controllers/reviewController");
+const { protect } = require("../middleware/auth");
+const { ensureReviewOwnerOrAdmin } = require("../middleware/ownership");
 
 // merge params allow access of bookid from parent
 const router = express.Router({ mergeParams: true }); 
@@ -11,12 +13,12 @@ router.get('/review-stats', reviewController.getReviewStats);
 router
   .route("/")
   .get(reviewController.getAllReviews)
-  .post(reviewController.createReview);
+  .post(protect, reviewController.createReview);
 
 // delete and update one
 router
   .route("/:id")
-  .delete(reviewController.deleteReview)
-  .patch(reviewController.updateReview);
+  .delete(protect, ensureReviewOwnerOrAdmin, reviewController.deleteReview)
+  .patch(protect, ensureReviewOwnerOrAdmin, reviewController.updateReview);
 
 module.exports = router;

@@ -13,6 +13,7 @@ const Table = ({books}) => {
                     <th className="p-4 border-b border-gray-700">Title</th>
                     <th className="p-4 border-b border-gray-700">Author</th>
                     <th className="p-4 border-b border-gray-700">Year</th>
+                    <th className="p-4 border-b border-gray-700">Rating</th>
                     <th className="p-4 border-b border-gray-700">Actions</th>
                 </tr>
             </thead>
@@ -27,6 +28,12 @@ const Table = ({books}) => {
                             <td className="p-4">{book.title}</td>
                             <td className="p-4">{book.author}</td>
                             <td className="p-4">{book.publishedYear}</td>
+                            <td className="p-4">
+                                {typeof book.ratingsAverage === "number"
+                                    ? book.ratingsAverage.toFixed(1)
+                                    : book.ratingsAverage || "-"}{" "}
+                                <span className="text-gray-400 text-xs">({book.ratingsQuantity ?? 0})</span>
+                            </td>
                             <td className="p-4">
                                 <div className="flex flex-row justify-center gap-4 text-teal-400">
                                     <Link to={`/books/details/${book._id}`} className="hover:text-teal-300">
@@ -44,7 +51,7 @@ const Table = ({books}) => {
                     ))
                 ) : (
                     <tr>
-                        <td colSpan="5" className="py-6 text-center text-teal-300">
+                        <td colSpan="6" className="py-6 text-center text-teal-300">
                             No books available.{' '}
                             <Link to="/books/create" className="underline hover:text-teal-400">
                                 Add one now

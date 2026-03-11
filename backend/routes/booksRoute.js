@@ -7,6 +7,8 @@ const {
   updateBook,
   deleteBook,
 } = require("../controllers/bookController");
+const { protect } = require("../middleware/auth");
+const { ensureBookOwnerOrAdmin } = require("../middleware/ownership");
 
 // review for nested routes /books/:bid/reviews
 const reviewRouter = require("./reviewRoute");
@@ -16,10 +18,10 @@ router.use("/:bookId/reviews", reviewRouter);
 // trending books based on review data
 router.get("/trending", reviewController.getTrendingBooks);
 
-router.post("/", createBook);
+router.post("/", protect, createBook);
 router.get("/", getBooks);
 router.get("/:id", getBook);
-router.patch("/:id", updateBook);
-router.delete("/:id", deleteBook);
+router.patch("/:id", protect, ensureBookOwnerOrAdmin, updateBook);
+router.delete("/:id", protect, ensureBookOwnerOrAdmin, deleteBook);
 
 module.exports = router;

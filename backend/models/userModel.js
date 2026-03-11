@@ -1,4 +1,9 @@
 const mongoose = require("mongoose");
+const {
+  hashPassword,
+  verifyPassword,
+  isBcryptHash,
+} = require("../utils/password");
 
 const userSchema = new mongoose.Schema(
   {
@@ -34,5 +39,18 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+
+  const raw = String(this.password || "");
+  if (isBcryptHash(raw)) return;
+
+  this.password = await hashPassword(raw);
+});
+
+userSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
+  return verifyPassword(candidatePassword, userPassword);
+};
 
 module.exports = mongoose.model("User", userSchema);
