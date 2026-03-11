@@ -1,87 +1,175 @@
-# MERN Books App 
+# 📔 MERN Book App
 
--A simple MERN (MongoDB, Express, React, Node.js) application for managing books.  
--This app allows users to create, view, edit, and delete books with basic details (Title, Author, Year).
+A full-stack **MERN** application for discovering books, writing reviews, and analyzing community ratings.
 
----
-
-## 🚀 Features
-- Add new books with Title, Author, and Published Year.
-- Fully Responsive with Toggle Table and Card View.
-- Quick View Modal in Card View for fast book info preview.
-- Edit existing book details.
-- Delete books with confirmation prompt.
-- View detailed book info (ID, created & updated timestamps).
-- Data is persisted in MongoDB.
+This project demonstrates **production-style backend architecture** including JWT authentication, role-based authorization, MongoDB aggregation pipelines, advanced query utilities (filtering, sorting, pagination), and a responsive React frontend.
 
 ---
 
-## 🛠 Tech Stack
-Frontend:
-- React (Vite)
-- Axios (API calls)
-- TailwindCSS (UI styling)
+# ✨ Features
 
-Backend:
-- Node.js
-- Express.js
-- MongoDB & Mongoose
+## ⚙️ Backend
 
----
-
-## ⚡ Getting Started
-### Clone the repository  
-```bash
-git clone https://github.com/NuhaG/BookApp.git
-```
-
-### Install dependencies (frontend & backend):  
-*Backend:*
-```bash
-cd backend  
-npm install  
-```
-*Frontend:*
-```bash
-cd frontend  
-npm install  
-```
-
-### Set up environment variables (in backend):  
-```bash
-PORT=5555  
-MONGO_URI=your_mongodb_connection_string  
-```
-
-### Run the app
-#### Start backend (Express)  
-```bash
-cd backend  
-npm run dev  
-```
-
-Backend runs at: http://localhost:5555
-
-#### Backend Routes  
-```GET /books``` → Fetch all books.  
-```GET /books/:id``` → Fetch a single book by ID.  
-```POST /books``` → Add a new book (JSON body: title, author, year).  
-```PATCH /books/:id``` → Update an existing book by ID.  
-```DELETE /books/:id``` → Delete a book by ID.
-
-#### Start frontend (React)  
-```bash
-cd frontend  
-npm run dev  
-```
-
-App runs at: http://localhost:5173
+* JWT authentication (register, login, current user)
+* Role-based and ownership authorization
+* Books CRUD API
+* Advanced query features
+  * filtering
+  * sorting
+  * field selection
+  * pagination
+* Reviews system with nested routes under books
+* Aggregation pipelines for analytics
+* Trending books endpoint
+* Automatic rating cache updates
+* Password hashing using **bcrypt**
+* Centralized error handling
 
 ---
 
-## 🔮 Future Improvements
-- User authentication (login/signup)
-- Search and filter books by title/author/year
-- Book cover image uploads
-- Pagination for large lists
-- Deployment to Vercel & Render
+## 🎨 Frontend
+
+* React + Vite
+* TailwindCSS UI
+* Axios API integration
+* Responsive layout
+* JWT stored in `localStorage`
+
+### Pages
+
+* Books list
+* Book details with reviews
+* Reviews page with statistics
+* Login / Register
+
+---
+
+# 🛠 Tech Stack
+
+### Backend
+
+* Node.js
+* Express 5
+* MongoDB
+* Mongoose
+* JWT
+* bcrypt
+
+### Frontend
+
+* React (Vite)
+* React Router
+* Axios
+* TailwindCSS
+
+---
+
+# 📂 Project Structure
+
+```
+MERN-BookApp/
+├── backend/
+│   ├── index.js                  # Express API entry
+│   ├── controllers/              # Auth / Book / Review controllers
+│   ├── middleware/               # JWT auth, ownership guards, error handler
+│   ├── models/                   # Mongoose schemas (User / Book / Review)
+│   ├── routes/                   # Express routers
+│   └── utils/                    # Helpers (APIFeatures, JWT)
+│
+└── frontend/
+    ├── index.html
+    ├── vite.config.js
+    └── src/
+        ├── api/                  # Axios client
+        ├── components/           # Shared UI components
+        ├── pages/                # Application pages
+        └── utils/                # Session + constants
+```
+
+---
+
+# 💻 Setup
+
+## 📋 Prerequisites
+
+* Node.js
+* MongoDB connection string (Atlas or local)
+
+---
+
+## 🔑 Environment Variables
+
+Create `backend/.env`
+
+```
+MONGO_URI=your_mongodb_connection_string
+PORT=5555
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=7d
+```
+
+Optional (`frontend/.env`)
+
+```
+VITE_API_URL=http://localhost:5555
+```
+
+---
+
+# ▶️ Running the Project
+
+### Start Backend
+
+```
+cd backend
+npm install
+npm run dev
+```
+
+### Start Frontend
+
+```
+cd frontend
+npm install
+npm run dev
+```
+
+Backend runs at:
+
+```
+http://localhost:5555
+```
+
+---
+
+# 📖 Documentation
+
+Full API documentation with route details and request/response examples is available in **API.md**.
+
+### Frontend Routes
+
+* `/` → Books list
+* `/books/details/:id` → Book details with reviews
+* `/reviews` → Reviews list with statistics
+* `/login`, `/register` → Authentication pages
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome!
+
+If you'd like to improve the project:
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Open a Pull Request
+
+Suggestions, improvements, and bug fixes are appreciated.
+
+---
+
+# 📄 License
+
+This project is licensed under the **MIT License**.
