@@ -144,7 +144,7 @@ http://localhost:5555
 
 # 📖 Documentation
 
-Full API documentation with route details and request/response examples is available in **API.md**.
+Full API documentation with route details and request/response examples is available in [API.md](api.md).
 
 ### Frontend Routes
 
