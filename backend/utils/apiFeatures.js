@@ -1,18 +1,18 @@
-// helper class to applky common api query features
+// Helper class to apply common API query features on Mongoose queries.
 class APIFeatures {
-  // store the base query, and req query str
+  // Store the base query and request query-string object.
   constructor(query, queryString) {
     this.query = query;
     this.queryString = queryString;
   }
 
-  // apply filtering and remove reserved params
+  // Apply filtering after removing reserved query params.
   filter() {
     const queryObj = { ...this.queryString };
     const excludedFields = ["page", "sort", "limit", "fields"];
     excludedFields.forEach((el) => delete queryObj[el]);
 
-    // convert comparision operators to mongo syntax ([gte] -> $gte)
+    // Convert comparison operators to Mongo syntax ([gte] -> $gte).
     let queryString = JSON.stringify(queryObj);
     queryString = queryString.replace(
       /\b(gte|gt|lte|lt)\b/g,
@@ -23,7 +23,7 @@ class APIFeatures {
     return this;
   }
 
-  // apply sorting from query str, default by created at (newest first)
+  // Apply sorting from query string, newest first by default.
   sort() {
     if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split(",").join(" ");
@@ -35,7 +35,7 @@ class APIFeatures {
     return this;
   }
 
-  // send req fields or exclude __v
+  // Apply field selection or exclude __v by default.
   limitFields() {
     if (this.queryString.fields) {
       const fields = this.queryString.fields.split(",").join(" ");
@@ -47,7 +47,7 @@ class APIFeatures {
     return this;
   }
 
-  // page and limit
+  // Apply basic page/limit pagination.
   paginate() {
     const page = this.queryString.page * 1 || 1;
     const limit = this.queryString.limit * 1 || 100;

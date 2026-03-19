@@ -26,64 +26,64 @@ const reviewSchema = new mongoose.Schema(
       ref: "User",
       required: [true, "Review must belong to a user."],
     },
-    // hides without deleting
+    // Soft-hide inappropriate content without deleting records.
     inappropriate: {
       type: Boolean,
       default: false,
     },
   },
   {
-    // track createdAt, updatedAt along with virtuals(not reflected in the db)
+    // Track timestamps and expose virtuals in API responses.
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   },
 );
 
-// indexing - 1 review per user for 1 book
+// Enforce one review per user per book.
 reviewSchema.index({ book: 1, user: 1 }, { unique: true });
 
-// query middleware - runs for all .find.. methods
+// Query middleware runs for find/findOne/findMany-style operations.
 reviewSchema.pre(/^find/, function (next) {
-  // filters inapp rev and never renders them on client side
+  // Exclude soft-hidden reviews from normal queries.
   this.find({ inappropriate: { $ne: true } });
 
-  // Performance timing marker (can be used for diagnostics/logging).
+  // Optional timing marker for diagnostics.
   this.start = Date.now();
   next();
 });
 
-// aggregation middleware
+// Aggregation middleware mirrors the same inappropriate-content filter.
 reviewSchema.pre("aggregate", function (next) {
-  // unshift() adds a $match stage to the begin of agg pipeline, ensures exclusion of inapp rev
+  // unshift() adds $match to the beginning of the pipeline.
   this.pipeline().unshift({ $match: { inappropriate: { $ne: true } } });
   next();
 });
 
-// static methods - use static as we need to call it on a model
+// Static helper to recompute and persist book rating caches.
 reviewSchema.statics.calcAverageRatings = async function (bookId) {
-  // recalc rating metrics for a book
+  // Recalculate rating metrics for one book.
   const stats = await this.aggregate([
-    // avgRev for this book
+    // Only aggregate reviews for the given book.
     { $match: { book: bookId } },
     {
       $group: {
         _id: "$book",
-        nRating: { $sum: 1 }, // no of rat
-        avgRating: { $avg: "$rating" }, // avg rat
+        nRating: { $sum: 1 },
+        avgRating: { $avg: "$rating" },
       },
     },
   ]);
 
-  // persist
+  // Persist aggregate values onto the parent book document.
   if (stats.length > 0) {
-    // save values when reviews exist
+    // Save values when reviews exist.
     await Book.findByIdAndUpdate(bookId, {
       ratingsQuantity: stats[0].nRating,
       ratingsAverage: stats[0].avgRating,
     });
   } else {
-    // if the last review is deleted, reset the book to defaults
+    // If last review is deleted, reset book metrics.
     await Book.findByIdAndUpdate(bookId, {
       ratingsAverage: 4.5,
       ratingsQuantity: 0,
@@ -91,14 +91,12 @@ reviewSchema.statics.calcAverageRatings = async function (bookId) {
   }
 };
 
-// document middleware
-// after saving - recalc for new reviews
+// After saving a review, recalculate the owning book's rating cache.
 reviewSchema.post("save", function () {
   this.constructor.calcAverageRatings(this.book);
 });
 
-// after update.delete - recalcul for edited reviews
-// update and del both use findOneAnd methods under the hood
+// After update/delete (findOneAnd...), recalculate from the mutated doc.
 reviewSchema.post(/^findOneAnd/, async function (doc) {
   if (doc) await doc.constructor.calcAverageRatings(doc.book);
 });

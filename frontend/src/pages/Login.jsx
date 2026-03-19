@@ -29,59 +29,59 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div className="min-h-screen bg-[var(--bg-app)] p-3 md:p-5 text-[var(--text-main)]">
       <NavBar />
-      <div className="max-w-6xl mx-auto p-6">
-        <h1 className="text-3xl font-bold text-teal-400 mb-6 text-center md:text-left">
+      <div className="max-w-7xl mx-auto rounded-xl border border-[var(--line)] bg-[var(--panel-bg)] p-6">
+        <h1 className="mb-6 text-center text-3xl font-bold text-[var(--text-main)] md:text-left">
           Login
         </h1>
 
-      {loading && (
-        <div className="flex justify-center mb-4">
-          <Loader />
-        </div>
-      )}
+        {loading && (
+          <div className="mb-4 flex justify-center">
+            <Loader />
+          </div>
+        )}
 
         <form
           onSubmit={handleSubmit}
-          className="max-w-md mx-auto bg-gray-800 p-6 rounded-lg shadow-lg border border-teal-500"
+          className="mx-auto max-w-md rounded-lg border border-[var(--line)] bg-[var(--card-bg)] p-6 shadow-lg"
         >
-        <div className="flex flex-col gap-4">
-          <label className="text-sm text-gray-300">
-            Email
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full p-2 rounded-md bg-gray-900 border border-gray-700 focus:border-teal-400 focus:outline-none"
-            />
-          </label>
+          <div className="flex flex-col gap-4">
+            <label className="text-sm text-[var(--text-soft)]">
+              Email
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-1 w-full rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
+              />
+            </label>
 
-          <label className="text-sm text-gray-300">
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full p-2 rounded-md bg-gray-900 border border-gray-700 focus:border-teal-400 focus:outline-none"
-            />
-          </label>
-        </div>
+            <label className="text-sm text-[var(--text-soft)]">
+              Password
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-1 w-full rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
+              />
+            </label>
+          </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full mt-6 bg-teal-500 hover:bg-teal-600 disabled:opacity-60 text-white font-semibold py-2 rounded-md transition-colors"
-        >
-          Login
-        </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="mt-6 w-full rounded-md bg-[var(--accent)] py-2 font-semibold text-white transition-colors hover:bg-blue-500 disabled:opacity-60"
+          >
+            Login
+          </button>
 
-        <p className="text-sm text-gray-300 mt-4 text-center">
-          Don&apos;t have an account?{" "}
-          <Link to="/register" className="text-teal-300 hover:text-teal-200 underline">
-            Register
-          </Link>
-        </p>
+          <p className="mt-4 text-center text-sm text-[var(--text-soft)]">
+            Don&apos;t have an account?{" "}
+            <Link to="/register" className="text-blue-300 underline hover:text-blue-200">
+              Register
+            </Link>
+          </p>
         </form>
       </div>
     </div>

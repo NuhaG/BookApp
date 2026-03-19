@@ -17,6 +17,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
 
   let decoded;
   try {
+    // Verify signature + expiry in one step.
     decoded = jwt.verify(token, process.env.JWT_SECRET);
   } catch {
     res.status(401);

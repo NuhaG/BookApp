@@ -1,143 +1,138 @@
-# 📔 MERN Book App
+# 📘 MERN Book App
 
-A full-stack **MERN** application for discovering books, writing reviews, and analyzing community ratings.
-
-This project demonstrates **production-style backend architecture** including JWT authentication, role-based authorization, MongoDB aggregation pipelines, advanced query utilities (filtering, sorting, pagination), and a responsive React frontend.
+A full-stack MERN application for discovering books, publishing chapters, and managing reader reviews — designed with a strong focus on **backend architecture, API design, and real-world application flow**.
 
 ---
 
-# ✨ Features
+## ✨ Features
 
-## ⚙️ Backend
+### 👨‍🎓 Reader Experience
 
-* JWT authentication (register, login, current user)
-* Role-based and ownership authorization
-* Books CRUD API
-* Advanced query features
+* Browse books from the Explore page
+* Filter, sort, and paginate results
+* Select page size (`6`, `12`, `24`) with proper navigation controls
+* Preview books with latest reviews directly from the list view
+* View detailed book pages with:
+
+  * chapter reading (modal overlay)
+  * reviews
+* Create, edit, and delete reviews
+
+---
+
+### ✍️ Author Experience
+
+* Add books with metadata and optional cover upload
+* Automatically continue to edit flow after creation
+* Manage personal catalog (`My Books`)
+* Edit and delete books
+* Publish chapters incrementally
+
+---
+
+### ⚙️ Backend Capabilities
+
+* JWT Authentication (`/auth/register`, `/auth/login`, `/auth/me`)
+* Role-based authorization and ownership guards
+* Advanced query handling:
+
   * filtering
   * sorting
-  * field selection
   * pagination
-* Reviews system with nested routes under books
-* Aggregation pipelines for analytics
-* Trending books endpoint
-* Automatic rating cache updates
-* Password hashing using **bcrypt**
-* Centralized error handling
+  * field selection
+* Aggregation pipelines:
+
+  * trending books
+  * review statistics
+* Nested routes for reviews
+* Chapter publishing system
+* Image uploads using Multer (stored locally in `/uploads/covers`)
 
 ---
 
-## 🎨 Frontend
+## 🛠️ Tech Stack
 
-* React + Vite
-* TailwindCSS UI
-* Axios API integration
-* Responsive layout
-* JWT stored in `localStorage`
-
-### Pages
-
-* Books list
-* Book details with reviews
-* Reviews page with statistics
-* Login / Register
-
----
-
-# 🛠 Tech Stack
-
-### Backend
+### 🧩 Backend
 
 * Node.js
-* Express 5
-* MongoDB
-* Mongoose
-* JWT
+* Express
+* MongoDB + Mongoose
+* JWT (`jsonwebtoken`)
 * bcrypt
+* multer
 
-### Frontend
+### 🎨 Frontend
 
 * React (Vite)
 * React Router
 * Axios
-* TailwindCSS
+* Tailwind CSS
 
 ---
 
-# 📂 Project Structure
+## 📂 Project Structure
 
-```
+```id="ok4c0k"
 MERN-BookApp/
 ├── backend/
-│   ├── index.js                  # Express API entry
-│   ├── controllers/              # Auth / Book / Review controllers
-│   ├── middleware/               # JWT auth, ownership guards, error handler
-│   ├── models/                   # Mongoose schemas (User / Book / Review)
-│   ├── routes/                   # Express routers
-│   └── utils/                    # Helpers (APIFeatures, JWT)
+│   ├── index.js
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   └── utils/
 │
 └── frontend/
     ├── index.html
     ├── vite.config.js
     └── src/
-        ├── api/                  # Axios client
-        ├── components/           # Shared UI components
-        ├── pages/                # Application pages
-        └── utils/                # Session + constants
+        ├── api/
+        ├── components/
+        ├── pages/
+        └── utils/
 ```
 
 ---
 
-# 💻 Setup
+## ⚙️ Environment Variables
 
-## 📋 Prerequisites
+### 🔐 Backend (`.env`)
 
-* Node.js
-* MongoDB connection string (Atlas or local)
-
----
-
-## 🔑 Environment Variables
-
-Create `backend/.env`
-
-```
+```id="0qggzj"
 MONGO_URI=your_mongodb_connection_string
 PORT=5555
 JWT_SECRET=your_jwt_secret
 JWT_EXPIRES_IN=7d
 ```
 
-Optional (`frontend/.env`)
+📌 Cover uploads are stored locally in `backend/uploads/covers`.
 
-```
+---
+
+### 🌐 Frontend (`.env`)
+
+```id="a1m2me"
 VITE_API_URL=http://localhost:5555
 ```
 
 ---
 
-# ▶️ Running the Project
+## ▶️ Running Locally
 
-### Start Backend
+### Backend
 
-```
+```id="q5thp3"
 cd backend
 npm install
 npm run dev
 ```
 
-### Start Frontend
+### Frontend
 
-```
+```id="4yhl6o"
 cd frontend
 npm install
 npm run dev
-```
-
-Backend runs at:
-
-```
-http://localhost:5555
 ```
 
 ---
@@ -145,13 +140,6 @@ http://localhost:5555
 # 📖 Documentation
 
 Full API documentation with route details and request/response examples is available in **API.md**.
-
-### Frontend Routes
-
-* `/` → Books list
-* `/books/details/:id` → Book details with reviews
-* `/reviews` → Reviews list with statistics
-* `/login`, `/register` → Authentication pages
 
 ---
 

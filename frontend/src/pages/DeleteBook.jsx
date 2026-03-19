@@ -40,21 +40,21 @@ const DeleteBook = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div className="min-h-screen bg-[var(--bg-app)] p-3 md:p-5 text-[var(--text-main)]">
       <NavBar />
       {loading ? (
         <div className="flex justify-center mt-20">
           <Loader />
         </div>
       ) : (
-        <div className="max-w-6xl mx-auto p-6 flex items-center justify-center">
-          <div className="bg-gray-800 p-8 rounded-lg shadow-lg text-center border border-teal-400 w-full max-w-md">
+        <div className="max-w-7xl mx-auto rounded-xl border border-[var(--line)] bg-[var(--panel-bg)] p-6 flex items-center justify-center">
+          <div className="bg-[var(--card-bg)] p-8 rounded-lg shadow-lg text-center border border-[var(--line)] w-full max-w-md">
             <h1 className="text-3xl font-bold text-red-400 mb-4">Delete Book</h1>
-            <h3 className="text-lg mb-6">Are you sure you want to delete this book?</h3>
+            <h3 className="text-lg mb-6 text-[var(--text-soft)]">Are you sure you want to delete this book?</h3>
             <div className="flex justify-center gap-4">
               <button
                 onClick={handleDelete}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
+                className="bg-[#b43b41] hover:bg-[#9f2f35] text-white px-4 py-2 rounded-md"
               >
                 Delete
               </button>

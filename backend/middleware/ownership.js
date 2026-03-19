@@ -5,6 +5,7 @@ const Review = require("../models/reviewModel");
 const isAdmin = (user) => user && user.role === "admin";
 
 exports.ensureBookOwnerOrAdmin = asyncHandler(async (req, res, next) => {
+  // Route param is :id for book routes.
   const book = await Book.findById(req.params.id);
   if (!book) {
     res.status(404);
@@ -35,6 +36,7 @@ exports.ensureReviewOwnerOrAdmin = asyncHandler(async (req, res, next) => {
 
   if (isAdmin(req.user)) return next();
 
+  // review.user may already be populated or may still be an ObjectId.
   const reviewUserId = review.user && review.user._id ? review.user._id : review.user;
   if (String(reviewUserId) !== String(req.user._id)) {
     res.status(403);

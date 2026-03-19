@@ -3,19 +3,28 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import Loader from '../components/Loader';
 import { api, getApiErrorMessage } from '../api/client';
+import { resolveCoverImageSrc } from '../utils/images';
 import NavBar from '../components/NavBar';
 import { getToken, getUser } from '../utils/session';
 
 const ShowBook = () => {
-  const [book, setBook] = useState({});
+  const renderStars = (ratingValue) => {
+    const safe = Math.max(0, Math.min(5, Number(ratingValue) || 0));
+    const rounded = Math.round(safe);
+    return '*****'.slice(0, rounded) + '-----'.slice(0, 5 - rounded);
+  };
+
+    const [book, setBook] = useState({});
   const [loading, setLoading] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
-  const [reviewText, setReviewText] = useState("");
-  const [rating, setRating] = useState("5");
+  const [reviewText, setReviewText] = useState('');
+  const [rating, setRating] = useState('5');
   const [editing, setEditing] = useState(null);
-  const [editText, setEditText] = useState("");
-  const [editRating, setEditRating] = useState("5");
+  const [editText, setEditText] = useState('');
+  const [editRating, setEditRating] = useState('5');
+  const [chapterModalOpen, setChapterModalOpen] = useState(false);
+  const [modalChapter, setModalChapter] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,13 +37,12 @@ const ShowBook = () => {
       .get(`/books/${id}`)
       .then((response) => {
         setBook(response.data.book);
-        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
         alert(getApiErrorMessage(err, 'Failed to load book details.'));
-        setLoading(false);
-      });
+      })
+      .finally(() => setLoading(false));
   }, [id]);
 
   const loadReviews = useCallback(() => {
@@ -51,13 +59,27 @@ const ShowBook = () => {
     loadReviews();
   }, [loadBook, loadReviews]);
 
+  const sortedChapters = Array.isArray(book.chapters)
+    ? book.chapters.slice().sort((a, b) => Number(a.chapterNumber) - Number(b.chapterNumber))
+    : [];
+
+  const openChapter = (chapter) => {
+    setModalChapter(chapter);
+    setChapterModalOpen(true);
+  };
+
+  const closeChapterModal = () => {
+    setChapterModalOpen(false);
+    setModalChapter(null);
+  };
+
   const requireLogin = () => {
-    navigate("/login", { replace: true, state: { from: location.pathname } });
+    navigate('/login', { replace: true, state: { from: location.pathname } });
   };
 
   const canModifyReview = (r) => {
     if (!me) return false;
-    if (me.role === "admin") return true;
+    if (me.role === 'admin') return true;
     const reviewUserId = r?.user?._id || r?.user;
     return String(reviewUserId) === String(me.id);
   };
@@ -66,18 +88,18 @@ const ShowBook = () => {
     if (!token) return requireLogin();
     try {
       await api.post(`/books/${id}/reviews`, { review: reviewText, rating: Number(rating) });
-      setReviewText("");
-      setRating("5");
+      setReviewText('');
+      setRating('5');
       loadReviews();
       loadBook();
     } catch (err) {
-      alert(getApiErrorMessage(err, "Failed to add review"));
+      alert(getApiErrorMessage(err, 'Failed to add review'));
     }
   };
 
   const startEdit = (r) => {
     setEditing(r._id);
-    setEditText(r.review || "");
+    setEditText(r.review || '');
     setEditRating(String(r.rating || 5));
   };
 
@@ -89,101 +111,95 @@ const ShowBook = () => {
       loadReviews();
       loadBook();
     } catch (err) {
-      alert(getApiErrorMessage(err, "Failed to update review"));
+      alert(getApiErrorMessage(err, 'Failed to update review'));
     }
   };
 
   const deleteReview = async (reviewId) => {
     if (!token) return requireLogin();
-    if (!confirm("Delete this review?")) return;
+    if (!confirm('Delete this review?')) return;
     try {
       await api.delete(`/reviews/${reviewId}`);
       loadReviews();
       loadBook();
     } catch (err) {
-      alert(getApiErrorMessage(err, "Failed to delete review"));
+      alert(getApiErrorMessage(err, 'Failed to delete review'));
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div className="min-h-screen bg-[var(--bg-app)] p-3 md:p-5">
       <NavBar />
-      <div className="max-w-6xl mx-auto p-5">
-        <h1 className="text-3xl font-bold text-teal-400 mb-6 text-center md:text-left">
-          Book Details
-        </h1>
+      <div className="mx-auto mt-3 max-w-7xl rounded-xl border border-[var(--line)] bg-[var(--panel-bg)] p-4 shadow-[0_8px_26px_rgba(0,0,0,0.35)]">
+        <h1 className="mb-4 text-center text-3xl font-bold text-[var(--text-main)] md:text-left">Book Details</h1>
 
         {loading ? (
-          <div className="flex justify-center mt-20">
+          <div className="mt-20 flex justify-center">
             <Loader />
           </div>
         ) : book && book.title ? (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-            <div className="lg:col-span-5 bg-gray-800 border border-teal-500 rounded-xl p-6 shadow-lg">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1.15fr]">
+            <div className="rounded-md border border-[var(--line)] bg-[var(--card-bg)] p-4 shadow-sm">
               {book.coverImg ? (
                 <img
-                  src={book.coverImg}
+                  src={resolveCoverImageSrc(book.coverImg)}
                   alt={book.title}
-                  className="w-full h-64 object-cover rounded-lg border border-gray-700"
+                  className="h-72 w-full rounded-md border border-[var(--line)] object-cover"
                   onError={(e) => {
-                    e.currentTarget.style.display = "none";
+                    e.currentTarget.style.display = 'none';
                   }}
                 />
               ) : null}
 
               <div className="mt-4 space-y-3">
                 <div>
-                  <span className="block text-sm text-gray-400">Title</span>
-                  <p className="text-xl font-semibold text-teal-300">{book.title}</p>
+                  <span className="block text-sm text-[var(--text-soft)]">Title</span>
+                  <p className="text-xl font-semibold text-[var(--text-main)]">{book.title}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <span className="block text-sm text-gray-400">Author</span>
-                    <p className="text-lg">{book.author}</p>
+                    <span className="block text-sm text-[var(--text-soft)]">Author</span>
+                    <p className="text-lg text-[var(--text-main)]">{book.author}</p>
                   </div>
                   <div>
-                    <span className="block text-sm text-gray-400">Published Year</span>
-                    <p className="text-lg">{book.publishedYear}</p>
+                    <span className="block text-sm text-[var(--text-soft)]">Published Year</span>
+                    <p className="text-lg text-[var(--text-main)]">{book.publishedYear}</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <span className="block text-sm text-gray-400">Avg Rating</span>
-                    <p className="text-lg">
-                      {typeof book.ratingsAverage === "number"
-                        ? book.ratingsAverage.toFixed(1)
-                        : book.ratingsAverage || "-"}
+                    <span className="block text-sm text-[var(--text-soft)]">Avg Rating</span>
+                    <p className="text-lg text-[var(--text-main)]">
+                      {typeof book.ratingsAverage === 'number' ? book.ratingsAverage.toFixed(1) : book.ratingsAverage || '-'}
                     </p>
+                    <p className="text-xs text-yellow-400">{renderStars(book.ratingsAverage)}</p>
                   </div>
                   <div>
-                    <span className="block text-sm text-gray-400">Ratings</span>
-                    <p className="text-lg">{book.ratingsQuantity ?? "-"}</p>
+                    <span className="block text-sm text-[var(--text-soft)]">Ratings</span>
+                    <p className="text-lg text-[var(--text-main)]">{book.ratingsQuantity ?? '-'}</p>
                   </div>
                 </div>
 
                 <div>
-                  <span className="block text-sm text-gray-400">Genres</span>
+                  <span className="block text-sm text-[var(--text-soft)]">Genres</span>
                   {Array.isArray(book.genre) && book.genre.length > 0 ? (
                     <div className="mt-1 flex flex-wrap gap-2">
                       {book.genre.map((g) => (
-                        <span
-                          key={g}
-                          className="text-xs px-2 py-1 rounded-full bg-gray-900 border border-gray-700 text-teal-200"
-                        >
+                        <span key={g} className="rounded-full border border-[var(--line)] bg-[#0b1220] px-2 py-1 text-xs text-[#bfdbfe]">
                           {g}
                         </span>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-gray-300">-</p>
+                    <p className="text-[var(--text-soft)]">-</p>
                   )}
                 </div>
 
                 <div>
-                  <span className="block text-sm text-gray-400">Description</span>
-                  <p className="text-gray-200 whitespace-pre-wrap">
-                    {book.description ? book.description : "No description provided."}
+                  <span className="block text-sm text-[var(--text-soft)]">Description</span>
+                  <p className="whitespace-pre-wrap text-[var(--text-soft)]">
+                    {book.description ? book.description : 'No description provided.'}
                   </p>
                 </div>
 
@@ -193,15 +209,39 @@ const ShowBook = () => {
               </div>
             </div>
 
-            <div className="lg:col-span-7 bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-lg">
-              <h2 className="text-xl font-semibold text-teal-200">Reviews</h2>
+            <div className="rounded-md border border-[var(--line)] bg-[var(--card-bg)] p-4 shadow-sm">
+              <h2 className="text-xl font-semibold text-[var(--text-main)]">Read Chapters</h2>
 
-              <div className="mt-4 bg-gray-950 border border-gray-800 rounded-lg p-4">
-                <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+              {sortedChapters.length === 0 ? (
+                <p className="mt-3 text-[var(--text-soft)]">No chapters published yet.</p>
+              ) : (
+                <div className="mt-3 space-y-2">
+                  {sortedChapters.map((chapter) => (
+                    <div key={chapter._id} className="rounded-md border border-[var(--line)] bg-[#0d1627] p-3">
+                      <p className="font-semibold text-[#dbeafe]">
+                        Chapter {chapter.chapterNumber}: {chapter.title}
+                      </p>
+                      <button
+                        onClick={() => openChapter(chapter)}
+                        className="mt-2 rounded-md bg-[var(--accent)] px-3 py-1 text-xs font-semibold text-white hover:bg-blue-500"
+                      >
+                        Read Chapter
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <h2 className="mt-6 border-t border-[var(--line)] pt-4 text-xl font-semibold text-[var(--text-main)]">
+                Leave A Review
+              </h2>
+
+              <div className="mt-4 rounded-md border border-[var(--line)] bg-[#0d1627] p-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                   <select
                     value={rating}
                     onChange={(e) => setRating(e.target.value)}
-                    className="p-2 rounded-md bg-gray-900 border border-gray-700 focus:border-teal-400 focus:outline-none"
+                    className="rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
                   >
                     <option value="5">5</option>
                     <option value="4">4</option>
@@ -212,22 +252,20 @@ const ShowBook = () => {
                   <textarea
                     value={reviewText}
                     onChange={(e) => setReviewText(e.target.value)}
-                    placeholder={token ? "Write a review..." : "Login to write a review"}
+                    placeholder={token ? 'Write a review...' : 'Login to write a review'}
                     rows={2}
-                    className="flex-1 p-2 rounded-md bg-gray-900 border border-gray-700 focus:border-teal-400 focus:outline-none"
+                    className="flex-1 rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
                   />
                   <button
                     onClick={submitReview}
                     disabled={!reviewText.trim()}
-                    className="px-4 py-2 rounded-md bg-teal-600 hover:bg-teal-700 disabled:opacity-60"
+                    className="rounded-md bg-[var(--accent)] px-4 py-2 text-white hover:bg-blue-500 disabled:opacity-60"
                   >
                     Add
                   </button>
                 </div>
                 {!token ? (
-                  <p className="text-xs text-gray-400 mt-2">
-                    Protected endpoint: you need to login to create a review.
-                  </p>
+                  <p className="mt-2 text-xs text-[var(--text-soft)]">Protected endpoint: login to create a review.</p>
                 ) : null}
               </div>
 
@@ -235,30 +273,30 @@ const ShowBook = () => {
                 {reviewsLoading ? (
                   <Loader />
                 ) : reviews.length === 0 ? (
-                  <p className="text-gray-300">No reviews yet.</p>
+                  <p className="text-[var(--text-soft)]">No reviews yet.</p>
                 ) : (
                   <div className="space-y-3">
                     {reviews.map((r) => {
                       const isEditing = editing === r._id;
                       const userLabel = r?.user?.name || r?.user?.email || (r?.user?._id || r?.user);
                       return (
-                        <div key={r._id} className="bg-gray-950 border border-gray-800 rounded-lg p-4">
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                            <div className="text-sm text-gray-300">
-                              <span className="text-teal-200 font-semibold">{userLabel}</span>{" "}
-                              <span className="text-gray-400">
-                                · {r.createdAt ? new Date(r.createdAt).toLocaleString() : ""}
-                              </span>
+                        <div key={r._id} className="rounded-md border border-[var(--line)] bg-[#0d1627] p-3">
+                          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="text-sm text-[var(--text-soft)]">
+                              <span className="font-semibold text-[#dbeafe]">{userLabel}</span>{' '}
+                              <span>- {r.createdAt ? new Date(r.createdAt).toLocaleString() : ''}</span>
                             </div>
-                            <div className="text-sm text-gray-200">Rating: {r.rating}</div>
+                            <div className="text-sm text-[var(--text-soft)]">
+                              {renderStars(r.rating)} <span>({r.rating})</span>
+                            </div>
                           </div>
 
                           {isEditing ? (
-                            <div className="mt-3 grid grid-cols-1 sm:grid-cols-12 gap-3">
+                            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-12">
                               <select
                                 value={editRating}
                                 onChange={(e) => setEditRating(e.target.value)}
-                                className="sm:col-span-2 p-2 rounded-md bg-gray-900 border border-gray-700 focus:border-teal-400 focus:outline-none"
+                                className="rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none sm:col-span-2"
                               >
                                 <option value="5">5</option>
                                 <option value="4">4</option>
@@ -270,38 +308,38 @@ const ShowBook = () => {
                                 value={editText}
                                 onChange={(e) => setEditText(e.target.value)}
                                 rows={2}
-                                className="sm:col-span-10 p-2 rounded-md bg-gray-900 border border-gray-700 focus:border-teal-400 focus:outline-none"
+                                className="rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none sm:col-span-10"
                               />
-                              <div className="sm:col-span-12 flex gap-2 justify-end">
+                              <div className="flex justify-end gap-2 sm:col-span-12">
                                 <button
                                   onClick={() => setEditing(null)}
-                                  className="px-3 py-2 rounded-md bg-gray-800 hover:bg-gray-700"
+                                  className="rounded-md border border-[var(--line)] px-3 py-2 text-[var(--text-soft)] hover:bg-[#1a2940]"
                                 >
                                   Cancel
                                 </button>
                                 <button
                                   onClick={saveEdit}
-                                  className="px-3 py-2 rounded-md bg-teal-600 hover:bg-teal-700"
+                                  className="rounded-md bg-[var(--accent)] px-3 py-2 text-white hover:bg-blue-500"
                                 >
                                   Save
                                 </button>
                               </div>
                             </div>
                           ) : (
-                            <p className="mt-2 text-gray-200 whitespace-pre-wrap">{r.review}</p>
+                            <p className="mt-2 whitespace-pre-wrap text-[var(--text-soft)]">{r.review}</p>
                           )}
 
                           {canModifyReview(r) && !isEditing ? (
-                            <div className="mt-3 flex gap-2 justify-end">
+                            <div className="mt-3 flex justify-end gap-2">
                               <button
                                 onClick={() => startEdit(r)}
-                                className="px-3 py-2 rounded-md bg-gray-800 hover:bg-gray-700"
+                                className="rounded-md border border-[var(--line)] px-3 py-2 text-[var(--text-soft)] hover:bg-[#1a2940]"
                               >
                                 Edit
                               </button>
                               <button
                                 onClick={() => deleteReview(r._id)}
-                                className="px-3 py-2 rounded-md bg-red-600 hover:bg-red-700"
+                                className="rounded-md bg-[#b43b41] px-3 py-2 text-white hover:bg-[#9f2f35]"
                               >
                                 Delete
                               </button>
@@ -316,11 +354,41 @@ const ShowBook = () => {
             </div>
           </div>
         ) : (
-          <p className="text-center text-gray-400 mt-20">Book not found.</p>
+          <p className="mt-20 text-center text-[var(--text-soft)]">Book not found.</p>
         )}
       </div>
+
+      {chapterModalOpen && modalChapter ? (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/75 p-4" onClick={closeChapterModal}>
+          <div
+            className="max-h-[85vh] w-full max-w-3xl overflow-auto rounded-xl border border-[var(--line)] bg-[var(--card-bg)] p-5 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-3 border-b border-[var(--line)] pb-3">
+              <div>
+                <p className="text-xs uppercase tracking-wider text-[var(--text-soft)]">Reading</p>
+                <h3 className="text-xl font-semibold text-[var(--text-main)]">
+                  Chapter {modalChapter.chapterNumber}: {modalChapter.title}
+                </h3>
+              </div>
+              <button
+                onClick={closeChapterModal}
+                className="rounded-md border border-[var(--line)] bg-[#111b2d] px-3 py-1 text-sm text-[var(--text-soft)] hover:text-white"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="mt-4 whitespace-pre-wrap text-[var(--text-soft)] leading-relaxed">
+              {modalChapter.content}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };
 
 export default ShowBook;
+
+

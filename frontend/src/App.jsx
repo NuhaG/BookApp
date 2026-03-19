@@ -8,6 +8,7 @@ import ShowBook from './pages/ShowBook';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Reviews from './pages/Reviews';
+import MyBooks from './pages/MyBooks';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
       <Route path='/register' element={<Register />} />
       <Route path='/reviews' element={<Reviews />} />
       <Route path='/books/create' element={<CreateBook/>} />
+      <Route path='/my-books' element={<MyBooks />} />
       <Route path='/books/edit/:id' element={<EditBook/>} />
       <Route path='/books/delete/:id' element={<DeleteBook/>} />
       <Route path='/books/details/:id' element={<ShowBook/>} />

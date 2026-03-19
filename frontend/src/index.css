@@ -1,1 +1,23 @@
 @import "tailwindcss";
+
+:root {
+  --bg-app: #070b14;
+  --panel-bg: #0f172a;
+  --card-bg: #111827;
+  --text-main: #e5e7eb;
+  --text-soft: #93a4bf;
+  --line: #253247;
+  --accent: #3b82f6;
+  --accent-soft: #1e293b;
+}
+
+body {
+  margin: 0;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  color: var(--text-main);
+  background: radial-gradient(circle at 20% 10%, #1e293b 0%, #0b1120 50%, #070b14 100%);
+}
+
+#root {
+  min-height: 100vh;
+}

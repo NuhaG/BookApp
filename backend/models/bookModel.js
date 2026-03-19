@@ -1,5 +1,39 @@
 const mongoose = require("mongoose");
 
+// Embedded chapter schema keeps chapter content versioned with its parent book.
+const chapterSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: [true, "Chapter title is required"],
+      trim: true,
+      minlength: [2, "Chapter title must be at least 2 characters"],
+      maxlength: [100, "Chapter title must be at most 100 characters"],
+    },
+    content: {
+      type: String,
+      required: [true, "Chapter content is required"],
+      trim: true,
+      minlength: [10, "Chapter content must be at least 10 characters"],
+      maxlength: [50000, "Chapter content must be at most 50000 characters"],
+    },
+    chapterNumber: {
+      type: Number,
+      required: [true, "Chapter number is required"],
+      min: [1, "Chapter number must be at least 1"],
+    },
+    isPublished: {
+      type: Boolean,
+      default: true,
+    },
+    publishedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { _id: true },
+);
+
 const bookSchema = mongoose.Schema(
   {
     title: {
@@ -66,12 +100,12 @@ const bookSchema = mongoose.Schema(
       type: String,
       default: "default-book.jpg",
     },
-    // ref to book owner
+    // Reference to the user who created this book.
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    // cache avg rating
+    // Cached aggregate values updated from review model hooks.
     ratingsAverage: {
       type: Number,
       default: 0,
@@ -79,11 +113,12 @@ const bookSchema = mongoose.Schema(
       max: 5,
       set: (val) => Math.round(val * 10) / 10,
     },
-    // cache no of ratings
+    // Cached number of ratings for quick listing queries.
     ratingsQuantity: {
       type: Number,
       default: 0,
     },
+    chapters: [chapterSchema],
   },
   {
     timestamps: true,

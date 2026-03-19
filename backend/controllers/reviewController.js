@@ -1,9 +1,9 @@
 const Review = require("../models/reviewModel");
 const asyncHandler = require("../utils/asyncHandler");
 
-// create a review for a book
+// Create a review from either /reviews or /books/:bookId/reviews.
 exports.createReview = asyncHandler(async (req, res) => {
-  // if book is not sent in body, read it from /books/:bookId/reviews route
+  // If book is not sent in body, read it from /books/:bookId/reviews.
   if (!req.body.book) req.body.book = req.params.bookId;
 
   // always set the review author from the authenticated user
@@ -13,13 +13,13 @@ exports.createReview = asyncHandler(async (req, res) => {
   res.status(201).json({ success: true, data: newReview });
 });
 
-// get all reviews or for one book
+// Get all reviews, or only one book's reviews on nested route.
 exports.getAllReviews = asyncHandler(async (req, res) => {
-  // filter if book id present in params 
+  // Apply nested filter if book id is present in params.
   let filter = {};
   if (req.params.bookId) filter = { book: req.params.bookId };
 
-  // find all or find by book id
+  // Populate basic user/book metadata for rendering.
   const reviews = await Review.find(filter)
     .populate({ path: "user", select: "name email role" })
     .populate({ path: "book", select: "title author publishedYear" });
@@ -64,9 +64,9 @@ exports.updateReview = asyncHandler(async (req, res) => {
   });
 });
 
-// aggregate stats by rating
+// Aggregate stats by rating bucket.
 exports.getReviewStats = asyncHandler(async (req, res) => {
-  // group reviews by rating, count rows, and compute avg ratig per grp
+  // Group reviews by rating, count rows, and compute average per group.
   const stats = await Review.aggregate([
     {
       $group: {
@@ -87,9 +87,9 @@ exports.getReviewStats = asyncHandler(async (req, res) => {
   });
 });
 
-// trending books list from recent review activity
+// Build trending books from recent (last 30 days) review activity.
 exports.getTrendingBooks = asyncHandler(async (req, res) => {
-  // aggregate reviews from the last 30 days and rank books by review volume
+  // Rank books by recent review volume.
   const trending = await Review.aggregate([
     {
       $match: {
@@ -105,7 +105,7 @@ exports.getTrendingBooks = asyncHandler(async (req, res) => {
     },
     { $sort: { reviewCount: -1 } },
     { $limit: 5 },
-    // join with books to fectch book details 
+    // Join with books collection to fetch book metadata.
     {
       $lookup: {
         from: "books",

@@ -2,6 +2,7 @@ const User = require("../models/userModel");
 const asyncHandler = require("../utils/asyncHandler");
 const generateToken = require("../utils/generateToken");
 
+// Return only public-safe user fields in auth responses.
 const sanitizeUser = (userDoc) => ({
   id: userDoc._id,
   name: userDoc.name,

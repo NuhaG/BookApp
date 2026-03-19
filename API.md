@@ -2,6 +2,14 @@
 
 Base URL (default): `http://localhost:5555`
 
+Uploaded cover files are served from:
+
+- `GET /uploads/covers/<filename>`
+
+Upload storage:
+
+- Cover uploads are stored locally under `/uploads/covers`.
+
 ## Conventions
 
 ### Auth header
@@ -82,8 +90,29 @@ Response:
 Response:
 
 ```json
-{ "success": true, "results": 10, "data": { "books": [] } }
+{
+  "success": true,
+  "results": 10,
+  "pagination": {
+    "page": 1,
+    "limit": 12,
+    "total": 120,
+    "totalPages": 10,
+    "hasNextPage": true,
+    "hasPrevPage": false
+  },
+  "data": { "books": [] }
+}
 ```
+
+Each book can include:
+
+- `chapters` (array) with objects:
+  - `title`
+  - `content`
+  - `chapterNumber`
+  - `isPublished`
+  - `publishedAt`
 
 #### Query features
 
@@ -105,7 +134,9 @@ GET /books?publishedYear[gte]=2015&sort=-publishedYear&fields=title,author,publi
 
 Creates a book. `createdBy` is derived from the authenticated user (not trusted from the client).
 
-Body (required):
+Body can be either JSON or `multipart/form-data`.
+
+Required fields:
 
 ```json
 { "title": "Dune", "author": "Frank Herbert", "publishedYear": 1965 }
@@ -115,7 +146,9 @@ Optional fields:
 
 - `description` (string)
 - `genre` (string[])
-- `coverImg` (string)
+- `coverImg`:
+  - string URL/path in JSON requests, or
+  - uploaded image file in `multipart/form-data` (field name: `coverImg`, max 5MB)
 
 Response:
 
@@ -133,12 +166,46 @@ Response:
 
 ### `PATCH /books/:id` (protected + creator/admin)
 
-Updates any provided fields (at least one field required).
+Updates any provided fields. Accepts JSON or `multipart/form-data` (same `coverImg` rules as create).
 
 Response:
 
 ```json
 { "success": true, "message": "Book updated successfully", "book": {} }
+```
+
+### `GET /books/my` (protected)
+
+Returns books created by the authenticated user.
+
+Response:
+
+```json
+{ "success": true, "results": 3, "data": { "books": [] } }
+```
+
+### `POST /books/:id/chapters` (protected + creator/admin)
+
+Publishes a chapter for the given book.
+
+Body:
+
+```json
+{
+  "title": "Chapter 1: Arrival",
+  "content": "Long chapter text...",
+  "chapterNumber": 1
+}
+```
+
+Notes:
+
+- `chapterNumber` must be a positive integer and must be unique per book.
+
+Response:
+
+```json
+{ "success": true, "message": "Chapter published successfully", "book": {} }
 ```
 
 ### `DELETE /books/:id` (protected + creator/admin)
@@ -220,13 +287,13 @@ Response:
 { "success": true, "data": { "stats": [] } }
 ```
 
-### Nested routes: `/books/:bookId/reviews`
+### Nested Routes: `/books/:bookId/reviews`
 
-- `GET /books/:bookId/reviews` — list reviews for a specific book
-- `POST /books/:bookId/reviews` (protected) — create a review for that book
+- `GET /books/:bookId/reviews` - list reviews for a specific book
+- `POST /books/:bookId/reviews` (protected) - create a review for that book
 
 ## Authorization Rules
 
-- **Books:** only the creator (`createdBy`) or an `admin` can `PATCH`/`DELETE`.
-- **Reviews:** only the review author (`user`) or an `admin` can `PATCH`/`DELETE`.
+- **Books:** only the creator (`createdBy`) or an `admin` can `PATCH` and `DELETE`.
+- **Reviews:** only the review author (`user`) or an `admin` can `PATCH` and `DELETE`.
 - **Banned users:** `isBanned=true` blocks login and protected actions.

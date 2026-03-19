@@ -2,6 +2,7 @@ require("dotenv").config({ path: __dirname + "/.env", override: true });
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require("path");
 
 // route modules
 const booksRoute = require("./routes/booksRoute");
@@ -12,12 +13,15 @@ const authRoute = require("./routes/authRoute");
 const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
+// Enable nested query parsing so filters like publishedYear[gte]=2020 work.
 app.set("query parser", "extended");
 const PORT = process.env.PORT || 5555;
 
 // middlewares
 app.use(express.json());
 app.use(cors());
+// Serve locally stored uploads.
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // routes
 app.get("/", (req, res) => {

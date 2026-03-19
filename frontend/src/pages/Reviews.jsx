@@ -84,10 +84,10 @@ const Reviews = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div className="min-h-screen bg-[var(--bg-app)] p-3 md:p-5 text-[var(--text-main)]">
       <NavBar />
-      <div className="max-w-6xl mx-auto p-6">
-        <h1 className="text-3xl font-bold text-teal-400 mb-6">Reviews</h1>
+      <div className="max-w-7xl mx-auto rounded-xl border border-[var(--line)] bg-[var(--panel-bg)] p-6">
+        <h1 className="text-3xl font-bold text-[var(--text-main)] mb-6">Reviews</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           <div className="lg:col-span-4 bg-gray-900 border border-gray-800 rounded-xl p-5">
@@ -232,4 +232,3 @@ const Reviews = () => {
 };
 
 export default Reviews;
-

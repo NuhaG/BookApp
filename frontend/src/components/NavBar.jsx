@@ -3,8 +3,10 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { clearSession, getToken, getUser } from "../utils/session";
 
 const linkClass = ({ isActive }) =>
-  `px-3 py-2 rounded-md hover:bg-gray-800 ${
-    isActive ? "bg-gray-800 text-teal-200" : "text-teal-300"
+  `rounded-sm border-b-2 px-3 py-2 text-sm font-semibold transition ${
+    isActive
+      ? "border-[var(--accent)] text-white"
+      : "border-transparent text-[var(--text-soft)] hover:text-white"
   }`;
 
 const NavBar = () => {
@@ -18,28 +20,29 @@ const NavBar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-gray-950/80 backdrop-blur border-b border-gray-800">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-        <Link to="/" className="text-teal-300 font-semibold tracking-wide">
+    <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[#0b1424]/90 backdrop-blur">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
+        <Link to="/" className="text-sm font-bold tracking-wide text-[#bfdbfe]">
           MERN Book App
         </Link>
 
-        <nav className="flex items-center gap-2 flex-wrap justify-end">
+        <nav className="flex items-center gap-1 flex-wrap justify-end">
           <NavLink to="/" className={linkClass} end>
-            Books
+            Home
           </NavLink>
-          <NavLink to="/reviews" className={linkClass}>
-            Reviews
+          <NavLink to="/my-books" className={linkClass}>
+            My Books
+          </NavLink>
+          <NavLink to="/books/create" className={linkClass}>
+            Add Book
           </NavLink>
 
           {token ? (
             <>
-              <span className="hidden sm:inline text-gray-300 px-2">
-                {user?.email ? user.email : "Logged in"}
-              </span>
               <button
                 onClick={logout}
-                className="px-3 py-2 rounded-md bg-gray-800 hover:bg-gray-700 text-teal-200"
+                className="rounded-md border border-[var(--line)] bg-[#111b2d] px-3 py-2 text-sm font-semibold text-[#dbeafe] hover:bg-[#1a2940]"
+                title={user?.email || "Logout"}
               >
                 Logout
               </button>
@@ -48,9 +51,6 @@ const NavBar = () => {
             <>
               <NavLink to="/login" className={linkClass}>
                 Login
-              </NavLink>
-              <NavLink to="/register" className={linkClass}>
-                Register
               </NavLink>
             </>
           )}
@@ -61,4 +61,3 @@ const NavBar = () => {
 };
 
 export default NavBar;
-
