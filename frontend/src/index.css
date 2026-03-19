@@ -1,49 +1,49 @@
 @import "tailwindcss";
 
 :root {
-  --bg-app: #070b14;
-  --bg-app-glow: #1e293b;
-  --bg-app-mid: #0b1120;
-  --panel-bg: #0f172a;
-  --card-bg: #111827;
-  --bg-shell: #0b1424;
-  --bg-input: #0b1220;
-  --bg-muted: #0d1627;
-  --bg-surface-alt: #111b2d;
-  --bg-hover: #1a2940;
-  --bg-chip: #16243b;
-  --bg-deep: #030712;
-  --text-main: #e5e7eb;
-  --text-soft: #93a4bf;
-  --text-muted-2: #6b7280;
-  --text-strong: #dbeafe;
-  --text-brand: #bfdbfe;
-  --text-link: #9ec5ff;
-  --text-chip: #cfe3ff;
-  --text-hero-subtle: #d6deea;
+  --bg-app: #050307;
+  --bg-app-glow: #140a1a;
+  --bg-app-mid: #0a0610;
+  --panel-bg: #110b17;
+  --card-bg: #181021;
+  --bg-shell: #0e0814;
+  --bg-input: #0d0712;
+  --bg-muted: #150d1d;
+  --bg-surface-alt: #1e1428;
+  --bg-hover: #281a35;
+  --bg-chip: #2a1736;
+  --bg-deep: #030205;
+  --text-main: #f8eefe;
+  --text-soft: #c8a8d8;
+  --text-muted-2: #9f83af;
+  --text-strong: #fff5ff;
+  --text-brand: #f2b2ff;
+  --text-link: #f58dd4;
+  --text-chip: #ffd0ee;
+  --text-hero-subtle: #f2dff7;
   --text-inverse: #ffffff;
-  --line: #253247;
-  --line-bright: rgba(255, 255, 255, 0.6);
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --rating: #facc15;
-  --danger: #b43b41;
-  --danger-hover: #9f2f35;
+  --line: #382442;
+  --line-bright: rgba(255, 218, 246, 0.6);
+  --accent: #d65ac3;
+  --accent-hover: #be46ab;
+  --rating: #ffc46b;
+  --danger: #ea5d8b;
+  --danger-hover: #d84a78;
   --overlay-backdrop: rgba(0, 0, 0, 0.75);
-  --overlay-dim: rgba(0, 0, 0, 0.3);
+  --overlay-dim: rgba(0, 0, 0, 0.45);
   --overlay-white-soft: rgba(255, 255, 255, 0.1);
   --hero-overlay: linear-gradient(
     100deg,
-    rgba(7, 11, 20, 0.93) 0%,
-    rgba(7, 11, 20, 0.65) 52%,
-    rgba(7, 11, 20, 0.48) 100%
+    rgba(8, 3, 12, 0.96) 0%,
+    rgba(16, 6, 24, 0.78) 52%,
+    rgba(16, 6, 24, 0.58) 100%
   );
   --hero-focus-overlay: radial-gradient(
     circle at 14% 36%,
-    rgba(0, 0, 0, 0.5) 0%,
+    rgba(77, 20, 90, 0.45) 0%,
     rgba(0, 0, 0, 0) 64%
   );
-  --hero-copy-bg: rgba(7, 11, 20, 0.42);
+  --hero-copy-bg: rgba(32, 10, 40, 0.42);
   --hero-copy-shadow: 0 10px 36px rgba(0, 0, 0, 0.45);
   --hero-text-shadow: 0 3px 16px rgba(0, 0, 0, 0.66);
   --shadow-elev: 0 8px 26px rgba(0, 0, 0, 0.35);
