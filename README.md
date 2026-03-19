@@ -139,7 +139,7 @@ npm run dev
 
 # 📖 Documentation
 
-Full API documentation with route details and request/response examples is available in **API.md**.
+Full API documentation with route details and request/response examples is available in [API.md](API.md).
 
 ---
 
