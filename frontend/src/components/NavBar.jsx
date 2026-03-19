@@ -23,7 +23,7 @@ const NavBar = () => {
     <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[#0b1424]/90 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
         <Link to="/" className="text-sm font-bold tracking-wide text-[#bfdbfe]">
-          MERN Book App
+          BookVerse
         </Link>
 
         <nav className="flex items-center gap-1 flex-wrap justify-end">

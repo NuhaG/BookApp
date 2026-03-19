@@ -9,7 +9,7 @@ import { GENRES } from '../utils/genres';
 import NavBar from '../components/NavBar';
 
 const EditBook = () => {
-    const [title, setTitle] = useState('');
+  const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [publishedYear, setPublishedYear] = useState('');
   const [description, setDescription] = useState('');
@@ -145,10 +145,13 @@ const EditBook = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-app)] p-3 md:p-5 text-[var(--text-main)]">
-      <NavBar />
-      <div className="max-w-7xl mx-auto rounded-xl border border-[var(--line)] bg-[var(--panel-bg)] p-6">
-        <h1 className="mb-6 text-center text-3xl font-bold text-[var(--text-main)] md:text-left">Edit Book</h1>
+    <div className="min-h-screen bg-[var(--bg-app)] p-3 md:p-5">
+      <div className="mx-auto max-w-7xl overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--panel-bg)] shadow-[0_8px_26px_rgba(0,0,0,0.35)]">
+        <NavBar />
+
+        <div className="m-4 flex items-center justify-between border-b border-[var(--line)] pb-3">
+          <h1 className="text-2xl font-bold text-[var(--text-main)]">Edit Book</h1>
+        </div>
 
         {loading ? (
           <div className="mb-4 flex justify-center">

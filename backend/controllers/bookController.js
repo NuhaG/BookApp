@@ -25,7 +25,7 @@ const normalizeGenre = (rawGenre) => {
           return parsed.map((genre) => String(genre).trim()).filter(Boolean);
         }
       } catch (err) {
-        // Fall back to plain string handling below.
+        console.log(err.message);        
       }
     }
 

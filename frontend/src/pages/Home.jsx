@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Loader from '../components/Loader';
 import { api } from '../api/client';
 import { resolveCoverImageSrc } from '../utils/images';
+import { GENRES } from '../utils/genres';
 import NavBar from '../components/NavBar';
 
 const renderStars = (rating) => {
@@ -18,6 +19,8 @@ const Home = () => {
   const [selectedBookId, setSelectedBookId] = useState('');
   const [reviews, setReviews] = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [trending, setTrending] = useState([]);
+  const [trendingLoading, setTrendingLoading] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 12,
@@ -28,13 +31,17 @@ const Home = () => {
   });
 
   const [sort, setSort] = useState('-createdAt');
+  const [genre, setGenre] = useState('');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(12);
 
   const queryParams = useMemo(() => {
     const params = { sort, page, limit };
+    if (genre) {
+      params.genre = genre;
+    }
     return params;
-  }, [limit, page, sort]);
+  }, [genre, limit, page, sort]);
 
   const selectedBook = useMemo(() => {
     if (!books.length) return null;
@@ -98,6 +105,34 @@ const Home = () => {
   }, [queryParams]);
 
   useEffect(() => {
+    const controller = new AbortController();
+    setTrendingLoading(true);
+
+    api
+      .get('/books/trending', { signal: controller.signal })
+      .then((res) => setTrending(res.data?.data?.trending || []))
+      .catch((err) => {
+        if (err?.code === 'ERR_CANCELED') return;
+        console.log(err);
+        setTrending([]);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setTrendingLoading(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, []);
+
+  const visibleTrending = useMemo(() => {
+    return trending.filter((entry) => {
+      const details = Array.isArray(entry.bookDetails) ? entry.bookDetails[0] : null;
+      return Boolean(details?._id && details?.title);
+    });
+  }, [trending]);
+
+  useEffect(() => {
     if (!selectedBook?._id) {
       setReviews([]);
       setReviewsLoading(false);
@@ -133,7 +168,7 @@ const Home = () => {
             <div className="mb-3 border-b border-[var(--line)] pb-3">
               <h1 className="text-2xl font-bold text-[var(--text-main)]">Explore Books</h1>
 
-              <div className="mt-3 grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
+              <div className="mt-3 grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -152,6 +187,22 @@ const Home = () => {
                   <option value={6}>6 per page</option>
                   <option value={12}>12 per page</option>
                   <option value={24}>24 per page</option>
+                </select>
+
+                <select
+                  value={genre}
+                  onChange={(e) => {
+                    setPage(1);
+                    setGenre(e.target.value);
+                  }}
+                  className="rounded-md border border-[var(--line)] bg-[#0b1220] px-3 py-1.5 text-sm text-[var(--text-main)] outline-none focus:border-[var(--accent)]"
+                >
+                  <option value="">All Genres</option>
+                  {GENRES.map((g) => (
+                    <option key={g} value={g}>
+                      {g}
+                    </option>
+                  ))}
                 </select>
 
                 <select
@@ -307,6 +358,59 @@ const Home = () => {
                               </div>
                             </div>
                             <p className="mt-1 text-sm text-[var(--text-soft)]">{r.review}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-4">
+                  <h3 className="border-b border-[var(--line)] pb-2 text-lg font-bold text-[#dbeafe]">Trending Books</h3>
+                  {trendingLoading ? (
+                    <div className="py-4">
+                      <Loader />
+                    </div>
+                  ) : visibleTrending.length === 0 ? (
+                    <p className="mt-3 text-sm text-[var(--text-soft)]">No trending books right now.</p>
+                  ) : (
+                    <div className="mt-2 space-y-2">
+                      {visibleTrending.slice(0, 5).map((entry) => {
+                        const details = Array.isArray(entry.bookDetails) ? entry.bookDetails[0] : null;
+                        const bookId = details?._id || entry._id;
+                        const title = details?.title || 'Untitled';
+                        const author = details?.author || 'Unknown author';
+                        const avg = typeof entry.averageRating === 'number' ? entry.averageRating.toFixed(1) : '0.0';
+                        const count = entry.reviewCount ?? 0;
+
+                        return (
+                          <div key={String(bookId)} className="rounded-md border border-[var(--line)] bg-[#0d1627] p-2">
+                            <div className="flex gap-3">
+                              <div className="h-16 w-12 shrink-0 overflow-hidden rounded-sm border border-[var(--line)] bg-[#0b1220]">
+                                {details?.coverImg ? (
+                                  <img
+                                    src={resolveCoverImageSrc(details.coverImg)}
+                                    alt={title}
+                                    className="h-full w-full object-cover"
+                                  />
+                                ) : null}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate text-sm font-semibold text-[#dbeafe]">{title}</p>
+                                <p className="truncate text-xs text-[var(--text-soft)]">by {author}</p>
+                                <p className="mt-1 text-xs text-yellow-400">
+                                  {renderStars(entry.averageRating)} {avg} ({count} reviews)
+                                </p>
+                                {bookId ? (
+                                  <Link
+                                    to={`/books/details/${bookId}`}
+                                    className="mt-1 inline-block text-xs font-semibold text-[#9ec5ff] hover:underline"
+                                  >
+                                    Open Details
+                                  </Link>
+                                ) : null}
+                              </div>
+                            </div>
                           </div>
                         );
                       })}
