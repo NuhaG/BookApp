@@ -14,7 +14,7 @@ const ShowBook = () => {
     return '*****'.slice(0, rounded) + '-----'.slice(0, 5 - rounded);
   };
 
-    const [book, setBook] = useState({});
+  const [book, setBook] = useState({});
   const [loading, setLoading] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
@@ -129,9 +129,12 @@ const ShowBook = () => {
 
   return (
     <div className="min-h-screen bg-[var(--bg-app)] p-3 md:p-5">
-      <NavBar />
-      <div className="mx-auto mt-3 max-w-7xl rounded-xl border border-[var(--line)] bg-[var(--panel-bg)] p-4 shadow-[0_8px_26px_rgba(0,0,0,0.35)]">
-        <h1 className="mb-4 text-center text-3xl font-bold text-[var(--text-main)] md:text-left">Book Details</h1>
+      <div className="mx-auto max-w-7xl overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--panel-bg)] shadow-[var(--shadow-elev)]">
+        <NavBar />
+
+        <div className="m-4 flex items-center justify-between border-b border-[var(--line)] pb-3">
+          <h1 className="text-2xl font-bold text-[var(--text-main)]">Book Details</h1>
+        </div>
 
         {loading ? (
           <div className="mt-20 flex justify-center">
@@ -141,14 +144,16 @@ const ShowBook = () => {
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1.15fr]">
             <div className="rounded-md border border-[var(--line)] bg-[var(--card-bg)] p-4 shadow-sm">
               {book.coverImg ? (
-                <img
-                  src={resolveCoverImageSrc(book.coverImg)}
-                  alt={book.title}
-                  className="h-72 w-full rounded-md border border-[var(--line)] object-cover"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
+                <div className="flex h-72 w-full items-center justify-center overflow-hidden rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2">
+                  <img
+                    src={resolveCoverImageSrc(book.coverImg)}
+                    alt={book.title}
+                    className="h-full w-full object-contain"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
               ) : null}
 
               <div className="mt-4 space-y-3">
@@ -173,7 +178,7 @@ const ShowBook = () => {
                     <p className="text-lg text-[var(--text-main)]">
                       {typeof book.ratingsAverage === 'number' ? book.ratingsAverage.toFixed(1) : book.ratingsAverage || '-'}
                     </p>
-                    <p className="text-xs text-yellow-400">{renderStars(book.ratingsAverage)}</p>
+                    <p className="text-xs text-[var(--rating)]">{renderStars(book.ratingsAverage)}</p>
                   </div>
                   <div>
                     <span className="block text-sm text-[var(--text-soft)]">Ratings</span>
@@ -186,7 +191,7 @@ const ShowBook = () => {
                   {Array.isArray(book.genre) && book.genre.length > 0 ? (
                     <div className="mt-1 flex flex-wrap gap-2">
                       {book.genre.map((g) => (
-                        <span key={g} className="rounded-full border border-[var(--line)] bg-[#0b1220] px-2 py-1 text-xs text-[#bfdbfe]">
+                        <span key={g} className="rounded-full border border-[var(--line)] bg-[var(--bg-input)] px-2 py-1 text-xs text-[var(--text-brand)]">
                           {g}
                         </span>
                       ))}
@@ -217,13 +222,13 @@ const ShowBook = () => {
               ) : (
                 <div className="mt-3 space-y-2">
                   {sortedChapters.map((chapter) => (
-                    <div key={chapter._id} className="rounded-md border border-[var(--line)] bg-[#0d1627] p-3">
-                      <p className="font-semibold text-[#dbeafe]">
+                    <div key={chapter._id} className="rounded-md border border-[var(--line)] bg-[var(--bg-muted)] p-3">
+                      <p className="font-semibold text-[var(--text-strong)]">
                         Chapter {chapter.chapterNumber}: {chapter.title}
                       </p>
                       <button
                         onClick={() => openChapter(chapter)}
-                        className="mt-2 rounded-md bg-[var(--accent)] px-3 py-1 text-xs font-semibold text-white hover:bg-blue-500"
+                        className="mt-2 rounded-md bg-[var(--accent)] px-3 py-1 text-xs font-semibold text-[var(--text-inverse)] hover:bg-[var(--accent-hover)]"
                       >
                         Read Chapter
                       </button>
@@ -236,12 +241,12 @@ const ShowBook = () => {
                 Leave A Review
               </h2>
 
-              <div className="mt-4 rounded-md border border-[var(--line)] bg-[#0d1627] p-3">
+              <div className="mt-4 rounded-md border border-[var(--line)] bg-[var(--bg-muted)] p-3">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                   <select
                     value={rating}
                     onChange={(e) => setRating(e.target.value)}
-                    className="rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
+                    className="rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
                   >
                     <option value="5">5</option>
                     <option value="4">4</option>
@@ -254,12 +259,12 @@ const ShowBook = () => {
                     onChange={(e) => setReviewText(e.target.value)}
                     placeholder={token ? 'Write a review...' : 'Login to write a review'}
                     rows={2}
-                    className="flex-1 rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
+                    className="flex-1 rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
                   />
                   <button
                     onClick={submitReview}
                     disabled={!reviewText.trim()}
-                    className="rounded-md bg-[var(--accent)] px-4 py-2 text-white hover:bg-blue-500 disabled:opacity-60"
+                    className="rounded-md bg-[var(--accent)] px-4 py-2 text-[var(--text-inverse)] hover:bg-[var(--accent-hover)] disabled:opacity-60"
                   >
                     Add
                   </button>
@@ -280,10 +285,10 @@ const ShowBook = () => {
                       const isEditing = editing === r._id;
                       const userLabel = r?.user?.name || r?.user?.email || (r?.user?._id || r?.user);
                       return (
-                        <div key={r._id} className="rounded-md border border-[var(--line)] bg-[#0d1627] p-3">
+                        <div key={r._id} className="rounded-md border border-[var(--line)] bg-[var(--bg-muted)] p-3">
                           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                             <div className="text-sm text-[var(--text-soft)]">
-                              <span className="font-semibold text-[#dbeafe]">{userLabel}</span>{' '}
+                              <span className="font-semibold text-[var(--text-strong)]">{userLabel}</span>{' '}
                               <span>- {r.createdAt ? new Date(r.createdAt).toLocaleString() : ''}</span>
                             </div>
                             <div className="text-sm text-[var(--text-soft)]">
@@ -296,7 +301,7 @@ const ShowBook = () => {
                               <select
                                 value={editRating}
                                 onChange={(e) => setEditRating(e.target.value)}
-                                className="rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none sm:col-span-2"
+                                className="rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none sm:col-span-2"
                               >
                                 <option value="5">5</option>
                                 <option value="4">4</option>
@@ -308,18 +313,18 @@ const ShowBook = () => {
                                 value={editText}
                                 onChange={(e) => setEditText(e.target.value)}
                                 rows={2}
-                                className="rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none sm:col-span-10"
+                                className="rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none sm:col-span-10"
                               />
                               <div className="flex justify-end gap-2 sm:col-span-12">
                                 <button
                                   onClick={() => setEditing(null)}
-                                  className="rounded-md border border-[var(--line)] px-3 py-2 text-[var(--text-soft)] hover:bg-[#1a2940]"
+                                  className="rounded-md border border-[var(--line)] px-3 py-2 text-[var(--text-soft)] hover:bg-[var(--bg-hover)]"
                                 >
                                   Cancel
                                 </button>
                                 <button
                                   onClick={saveEdit}
-                                  className="rounded-md bg-[var(--accent)] px-3 py-2 text-white hover:bg-blue-500"
+                                  className="rounded-md bg-[var(--accent)] px-3 py-2 text-[var(--text-inverse)] hover:bg-[var(--accent-hover)]"
                                 >
                                   Save
                                 </button>
@@ -333,13 +338,13 @@ const ShowBook = () => {
                             <div className="mt-3 flex justify-end gap-2">
                               <button
                                 onClick={() => startEdit(r)}
-                                className="rounded-md border border-[var(--line)] px-3 py-2 text-[var(--text-soft)] hover:bg-[#1a2940]"
+                                className="rounded-md border border-[var(--line)] px-3 py-2 text-[var(--text-soft)] hover:bg-[var(--bg-hover)]"
                               >
                                 Edit
                               </button>
                               <button
                                 onClick={() => deleteReview(r._id)}
-                                className="rounded-md bg-[#b43b41] px-3 py-2 text-white hover:bg-[#9f2f35]"
+                                className="rounded-md bg-[var(--danger)] px-3 py-2 text-[var(--text-inverse)] hover:bg-[var(--danger-hover)]"
                               >
                                 Delete
                               </button>
@@ -359,7 +364,7 @@ const ShowBook = () => {
       </div>
 
       {chapterModalOpen && modalChapter ? (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/75 p-4" onClick={closeChapterModal}>
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[var(--overlay-backdrop)] p-4" onClick={closeChapterModal}>
           <div
             className="max-h-[85vh] w-full max-w-3xl overflow-auto rounded-xl border border-[var(--line)] bg-[var(--card-bg)] p-5 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
@@ -373,7 +378,7 @@ const ShowBook = () => {
               </div>
               <button
                 onClick={closeChapterModal}
-                className="rounded-md border border-[var(--line)] bg-[#111b2d] px-3 py-1 text-sm text-[var(--text-soft)] hover:text-white"
+                className="rounded-md border border-[var(--line)] bg-[var(--bg-surface-alt)] px-3 py-1 text-sm text-[var(--text-soft)] hover:text-[var(--text-inverse)]"
               >
                 Close
               </button>
@@ -390,5 +395,6 @@ const ShowBook = () => {
 };
 
 export default ShowBook;
+
 
 

@@ -2,20 +2,63 @@
 
 :root {
   --bg-app: #070b14;
+  --bg-app-glow: #1e293b;
+  --bg-app-mid: #0b1120;
   --panel-bg: #0f172a;
   --card-bg: #111827;
+  --bg-shell: #0b1424;
+  --bg-input: #0b1220;
+  --bg-muted: #0d1627;
+  --bg-surface-alt: #111b2d;
+  --bg-hover: #1a2940;
+  --bg-chip: #16243b;
+  --bg-deep: #030712;
   --text-main: #e5e7eb;
   --text-soft: #93a4bf;
+  --text-muted-2: #6b7280;
+  --text-strong: #dbeafe;
+  --text-brand: #bfdbfe;
+  --text-link: #9ec5ff;
+  --text-chip: #cfe3ff;
+  --text-hero-subtle: #d6deea;
+  --text-inverse: #ffffff;
   --line: #253247;
+  --line-bright: rgba(255, 255, 255, 0.6);
   --accent: #3b82f6;
-  --accent-soft: #1e293b;
+  --accent-hover: #2563eb;
+  --rating: #facc15;
+  --danger: #b43b41;
+  --danger-hover: #9f2f35;
+  --overlay-backdrop: rgba(0, 0, 0, 0.75);
+  --overlay-dim: rgba(0, 0, 0, 0.3);
+  --overlay-white-soft: rgba(255, 255, 255, 0.1);
+  --hero-overlay: linear-gradient(
+    100deg,
+    rgba(7, 11, 20, 0.93) 0%,
+    rgba(7, 11, 20, 0.65) 52%,
+    rgba(7, 11, 20, 0.48) 100%
+  );
+  --hero-focus-overlay: radial-gradient(
+    circle at 14% 36%,
+    rgba(0, 0, 0, 0.5) 0%,
+    rgba(0, 0, 0, 0) 64%
+  );
+  --hero-copy-bg: rgba(7, 11, 20, 0.42);
+  --hero-copy-shadow: 0 10px 36px rgba(0, 0, 0, 0.45);
+  --hero-text-shadow: 0 3px 16px rgba(0, 0, 0, 0.66);
+  --shadow-elev: 0 8px 26px rgba(0, 0, 0, 0.35);
 }
 
 body {
   margin: 0;
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
   color: var(--text-main);
-  background: radial-gradient(circle at 20% 10%, #1e293b 0%, #0b1120 50%, #070b14 100%);
+  background: radial-gradient(
+    circle at 20% 10%,
+    var(--bg-app-glow) 0%,
+    var(--bg-app-mid) 50%,
+    var(--bg-app) 100%
+  );
 }
 
 #root {

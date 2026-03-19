@@ -90,12 +90,12 @@ const Reviews = () => {
         <h1 className="text-3xl font-bold text-[var(--text-main)] mb-6">Reviews</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          <div className="lg:col-span-4 bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <div className="lg:col-span-4 bg-[var(--card-bg)] border border-[var(--line)] rounded-xl p-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-teal-200">Stats</h2>
+              <h2 className="text-xl font-semibold text-[var(--text-brand)]">Stats</h2>
               <button
                 onClick={loadStats}
-                className="px-3 py-2 rounded-md bg-gray-800 hover:bg-gray-700"
+                className="px-3 py-2 rounded-md bg-[var(--bg-surface-alt)] hover:bg-[var(--bg-hover)]"
               >
                 Refresh
               </button>
@@ -106,28 +106,28 @@ const Reviews = () => {
                 <Loader />
               </div>
             ) : stats.length === 0 ? (
-              <p className="text-gray-300 mt-3">No stats yet.</p>
+              <p className="text-[var(--text-main)] mt-3">No stats yet.</p>
             ) : (
               <div className="mt-4 space-y-2">
                 {stats.map((s) => (
                   <div
                     key={String(s._id)}
-                    className="flex items-center justify-between bg-gray-950 border border-gray-800 rounded-lg px-3 py-2"
+                    className="flex items-center justify-between bg-[var(--bg-deep)] border border-[var(--line)] rounded-lg px-3 py-2"
                   >
-                    <div className="text-gray-200">Rating {s._id}</div>
-                    <div className="text-gray-300 text-sm">{s.numReviews} reviews</div>
+                    <div className="text-[var(--text-main)]">Rating {s._id}</div>
+                    <div className="text-[var(--text-main)] text-sm">{s.numReviews} reviews</div>
                   </div>
                 ))}
               </div>
             )}
           </div>
 
-          <div className="lg:col-span-8 bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <div className="lg:col-span-8 bg-[var(--card-bg)] border border-[var(--line)] rounded-xl p-5">
             <div className="flex items-center justify-between flex-wrap gap-2">
-              <h2 className="text-xl font-semibold text-teal-200">All Reviews</h2>
+              <h2 className="text-xl font-semibold text-[var(--text-brand)]">All Reviews</h2>
               <button
                 onClick={loadReviews}
-                className="px-3 py-2 rounded-md bg-gray-800 hover:bg-gray-700"
+                className="px-3 py-2 rounded-md bg-[var(--bg-surface-alt)] hover:bg-[var(--bg-hover)]"
               >
                 Refresh
               </button>
@@ -138,7 +138,7 @@ const Reviews = () => {
                 <Loader />
               </div>
             ) : reviews.length === 0 ? (
-              <p className="text-gray-300 mt-3">No reviews found.</p>
+              <p className="text-[var(--text-main)] mt-3">No reviews found.</p>
             ) : (
               <div className="mt-4 space-y-3">
                 {reviews.map((r) => {
@@ -146,17 +146,17 @@ const Reviews = () => {
                   const userLabel = r?.user?.name || r?.user?.email || (r?.user?._id || r?.user);
                   const bookLabel = r?.book?.title ? `${r.book.title} (${r.book.publishedYear ?? "-"})` : String(r.book);
                   return (
-                    <div key={r._id} className="bg-gray-950 border border-gray-800 rounded-lg p-4">
+                    <div key={r._id} className="bg-[var(--bg-deep)] border border-[var(--line)] rounded-lg p-4">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                        <div className="text-sm text-gray-300">
-                          <span className="text-teal-200 font-semibold">{userLabel}</span>{" "}
-                          <span className="text-gray-500">·</span>{" "}
-                          <span className="text-gray-300">{bookLabel}</span>{" "}
-                          <span className="text-gray-400">
+                        <div className="text-sm text-[var(--text-main)]">
+                          <span className="text-[var(--text-brand)] font-semibold">{userLabel}</span>{" "}
+                          <span className="text-[var(--text-muted-2)]">·</span>{" "}
+                          <span className="text-[var(--text-main)]">{bookLabel}</span>{" "}
+                          <span className="text-[var(--text-soft)]">
                             {r.createdAt ? `· ${new Date(r.createdAt).toLocaleString()}` : ""}
                           </span>
                         </div>
-                        <div className="text-sm text-gray-200">Rating: {r.rating}</div>
+                        <div className="text-sm text-[var(--text-main)]">Rating: {r.rating}</div>
                       </div>
 
                       {isEditing ? (
@@ -164,7 +164,7 @@ const Reviews = () => {
                           <select
                             value={editRating}
                             onChange={(e) => setEditRating(e.target.value)}
-                            className="sm:col-span-2 p-2 rounded-md bg-gray-900 border border-gray-700 focus:border-teal-400 focus:outline-none"
+                            className="sm:col-span-2 p-2 rounded-md bg-[var(--card-bg)] border border-[var(--line)] focus:border-[var(--accent)] focus:outline-none"
                           >
                             <option value="5">5</option>
                             <option value="4">4</option>
@@ -176,38 +176,38 @@ const Reviews = () => {
                             value={editText}
                             onChange={(e) => setEditText(e.target.value)}
                             rows={2}
-                            className="sm:col-span-10 p-2 rounded-md bg-gray-900 border border-gray-700 focus:border-teal-400 focus:outline-none"
+                            className="sm:col-span-10 p-2 rounded-md bg-[var(--card-bg)] border border-[var(--line)] focus:border-[var(--accent)] focus:outline-none"
                           />
                           <div className="sm:col-span-12 flex gap-2 justify-end">
                             <button
                               onClick={() => setEditing(null)}
-                              className="px-3 py-2 rounded-md bg-gray-800 hover:bg-gray-700"
+                              className="px-3 py-2 rounded-md bg-[var(--bg-surface-alt)] hover:bg-[var(--bg-hover)]"
                             >
                               Cancel
                             </button>
                             <button
                               onClick={saveEdit}
-                              className="px-3 py-2 rounded-md bg-teal-600 hover:bg-teal-700"
+                              className="px-3 py-2 rounded-md bg-[var(--accent)] hover:bg-[var(--accent-hover)]"
                             >
                               Save
                             </button>
                           </div>
                         </div>
                       ) : (
-                        <p className="mt-2 text-gray-200 whitespace-pre-wrap">{r.review}</p>
+                        <p className="mt-2 text-[var(--text-main)] whitespace-pre-wrap">{r.review}</p>
                       )}
 
                       {canModifyReview(r) && !isEditing ? (
                         <div className="mt-3 flex gap-2 justify-end">
                           <button
                             onClick={() => startEdit(r)}
-                            className="px-3 py-2 rounded-md bg-gray-800 hover:bg-gray-700"
+                            className="px-3 py-2 rounded-md bg-[var(--bg-surface-alt)] hover:bg-[var(--bg-hover)]"
                           >
                             Edit
                           </button>
                           <button
                             onClick={() => deleteReview(r._id)}
-                            className="px-3 py-2 rounded-md bg-red-600 hover:bg-red-700"
+                            className="px-3 py-2 rounded-md bg-[var(--danger)] hover:bg-[var(--danger-hover)]"
                           >
                             Delete
                           </button>
@@ -222,7 +222,7 @@ const Reviews = () => {
         </div>
 
         {!token ? (
-          <p className="text-xs text-gray-400 mt-4">
+          <p className="text-xs text-[var(--text-soft)] mt-4">
             Edit/delete review endpoints are protected; login to manage your reviews.
           </p>
         ) : null}

@@ -6,23 +6,23 @@ import { Link } from 'react-router-dom';
 
 const Table = ({books}) => {
     return (
-        <table className="w-full border border-gray-700 rounded-lg overflow-hidden mt-4">
-            <thead className="bg-gray-800 text-teal-300">
+        <table className="w-full border border-[var(--line)] rounded-lg overflow-hidden mt-4">
+            <thead className="bg-[var(--bg-surface-alt)] text-[var(--text-link)]">
                 <tr>
-                    <th className="p-4 border-b border-gray-700">#</th>
-                    <th className="p-4 border-b border-gray-700">Title</th>
-                    <th className="p-4 border-b border-gray-700">Author</th>
-                    <th className="p-4 border-b border-gray-700">Year</th>
-                    <th className="p-4 border-b border-gray-700">Rating</th>
-                    <th className="p-4 border-b border-gray-700">Actions</th>
+                    <th className="p-4 border-b border-[var(--line)]">#</th>
+                    <th className="p-4 border-b border-[var(--line)]">Title</th>
+                    <th className="p-4 border-b border-[var(--line)]">Author</th>
+                    <th className="p-4 border-b border-[var(--line)]">Year</th>
+                    <th className="p-4 border-b border-[var(--line)]">Rating</th>
+                    <th className="p-4 border-b border-[var(--line)]">Actions</th>
                 </tr>
             </thead>
-            <tbody className="bg-gray-900 text-gray-200">
+            <tbody className="bg-[var(--card-bg)] text-[var(--text-main)]">
                 {books.length > 0 ? (
                     books.map((book, index) => (
                         <tr
                             key={book._id}
-                            className="hover:bg-gray-800 transition border-b border-gray-700"
+                            className="hover:bg-[var(--bg-surface-alt)] transition border-b border-[var(--line)]"
                         >
                             <td className="p-4">{index + 1}</td>
                             <td className="p-4">{book.title}</td>
@@ -32,17 +32,17 @@ const Table = ({books}) => {
                                 {typeof book.ratingsAverage === "number"
                                     ? book.ratingsAverage.toFixed(1)
                                     : book.ratingsAverage || "-"}{" "}
-                                <span className="text-gray-400 text-xs">({book.ratingsQuantity ?? 0})</span>
+                                <span className="text-[var(--text-soft)] text-xs">({book.ratingsQuantity ?? 0})</span>
                             </td>
                             <td className="p-4">
-                                <div className="flex flex-row justify-center gap-4 text-teal-400">
-                                    <Link to={`/books/details/${book._id}`} className="hover:text-teal-300">
+                                <div className="flex flex-row justify-center gap-4 text-[var(--accent)]">
+                                    <Link to={`/books/details/${book._id}`} className="hover:text-[var(--text-link)]">
                                         <BsInfoCircle size={20} />
                                     </Link>
-                                    <Link to={`/books/edit/${book._id}`} className="hover:text-teal-300">
+                                    <Link to={`/books/edit/${book._id}`} className="hover:text-[var(--text-link)]">
                                         <AiOutlineEdit size={20} />
                                     </Link>
-                                    <Link to={`/books/delete/${book._id}`} className="hover:text-red-400">
+                                    <Link to={`/books/delete/${book._id}`} className="hover:text-[var(--danger)]">
                                         <MdOutlineDelete size={20} />
                                     </Link>
                                 </div>
@@ -51,9 +51,9 @@ const Table = ({books}) => {
                     ))
                 ) : (
                     <tr>
-                        <td colSpan="6" className="py-6 text-center text-teal-300">
+                        <td colSpan="6" className="py-6 text-center text-[var(--text-link)]">
                             No books available.{' '}
-                            <Link to="/books/create" className="underline hover:text-teal-400">
+                            <Link to="/books/create" className="underline hover:text-[var(--accent)]">
                                 Add one now
                             </Link>.
                         </td>
@@ -65,3 +65,4 @@ const Table = ({books}) => {
 }
 
 export default Table
+

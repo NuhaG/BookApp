@@ -5,8 +5,8 @@ import { clearSession, getToken, getUser } from "../utils/session";
 const linkClass = ({ isActive }) =>
   `rounded-sm border-b-2 px-3 py-2 text-sm font-semibold transition ${
     isActive
-      ? "border-[var(--accent)] text-white"
-      : "border-transparent text-[var(--text-soft)] hover:text-white"
+      ? "border-[var(--accent)] text-[var(--text-inverse)]"
+      : "border-transparent text-[var(--text-soft)] hover:text-[var(--text-inverse)]"
   }`;
 
 const NavBar = () => {
@@ -20,15 +20,18 @@ const NavBar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[#0b1424]/90 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--bg-shell)]/90 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
-        <Link to="/" className="text-sm font-bold tracking-wide text-[#bfdbfe]">
+        <Link to="/" className="text-xl font-bold tracking-wide text-[var(--text-brand)]">
           BookVerse
         </Link>
 
         <nav className="flex items-center gap-1 flex-wrap justify-end">
-          <NavLink to="/" className={linkClass} end>
-            Home
+          <NavLink to="/explore" className={linkClass}>
+            Explore
+          </NavLink>
+          <NavLink to="/trending" className={linkClass}>
+            Trending
           </NavLink>
           <NavLink to="/my-books" className={linkClass}>
             My Books
@@ -41,7 +44,7 @@ const NavBar = () => {
             <>
               <button
                 onClick={logout}
-                className="rounded-md border border-[var(--line)] bg-[#111b2d] px-3 py-2 text-sm font-semibold text-[#dbeafe] hover:bg-[#1a2940]"
+                className="rounded-md border border-[var(--line)] bg-[var(--bg-surface-alt)] px-3 py-2 text-sm font-semibold text-[var(--text-strong)] hover:bg-[var(--bg-hover)]"
                 title={user?.email || "Logout"}
               >
                 Logout

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home';
+import Landing from './pages/Landing';
 import CreateBook from './pages/CreateBook';
 import EditBook from './pages/EditBook';
 import DeleteBook from './pages/DeleteBook';
@@ -9,11 +10,14 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Reviews from './pages/Reviews';
 import MyBooks from './pages/MyBooks';
+import TrendingBooks from './pages/TrendingBooks';
 
 const App = () => {
   return (
     <Routes>
-      <Route path='/' element={<Home />} />
+      <Route path='/' element={<Landing />} />
+      <Route path='/explore' element={<Home />} />
+      <Route path='/trending' element={<TrendingBooks />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
       <Route path='/reviews' element={<Reviews />} />

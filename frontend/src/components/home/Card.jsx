@@ -15,13 +15,13 @@ const Card = ({ books }) => {
                 books.map((book) => (
                     <div
                         key={book._id}
-                        className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-5 flex flex-col justify-between hover:shadow-teal-500 transition"
+                        className="bg-[var(--bg-surface-alt)] border border-[var(--line)] rounded-lg shadow-lg p-5 flex flex-col justify-between hover:shadow-[0_0_22px_var(--accent)] transition"
                     >
                         <div>
-                            <h2 className="text-xl font-semibold text-teal-300">{book.title}</h2>
-                            <p className="text-gray-400 mt-1">Author: {book.author}</p>
-                            <p className="text-gray-400 text-sm mt-1">Year: {book.publishedYear}</p>
-                            <p className="text-gray-400 text-sm mt-1">
+                            <h2 className="text-xl font-semibold text-[var(--text-link)]">{book.title}</h2>
+                            <p className="text-[var(--text-soft)] mt-1">Author: {book.author}</p>
+                            <p className="text-[var(--text-soft)] text-sm mt-1">Year: {book.publishedYear}</p>
+                            <p className="text-[var(--text-soft)] text-sm mt-1">
                                 Rating:{" "}
                                 {typeof book.ratingsAverage === "number"
                                     ? book.ratingsAverage.toFixed(1)
@@ -33,7 +33,7 @@ const Card = ({ books }) => {
                                     {book.genre.slice(0, 3).map((g) => (
                                         <span
                                             key={g}
-                                            className="text-xs px-2 py-1 rounded-full bg-gray-900 border border-gray-700 text-teal-200"
+                                            className="text-xs px-2 py-1 rounded-full bg-[var(--card-bg)] border border-[var(--line)] text-[var(--text-brand)]"
                                         >
                                             {g}
                                         </span>
@@ -41,30 +41,30 @@ const Card = ({ books }) => {
                                 </div>
                             ) : null}
                         </div>
-                        <div className="flex justify-end gap-4 text-teal-400 mt-4">
+                        <div className="flex justify-end gap-4 text-[var(--accent)] mt-4">
                             <button
                                 onClick={() => setShow(book)}
-                                className="hover:text-teal-300"
+                                className="hover:text-[var(--text-link)]"
                                 title="Quick View"
                             >
                                 <BiShow size={22} />
                             </button>
-                            <Link to={`/books/details/${book._id}`} className="hover:text-teal-300" title="Details Page">
+                            <Link to={`/books/details/${book._id}`} className="hover:text-[var(--text-link)]" title="Details Page">
                                 <BsInfoCircle size={22} />
                             </Link>
-                            <Link to={`/books/edit/${book._id}`} className="hover:text-teal-300" title="Edit Book">
+                            <Link to={`/books/edit/${book._id}`} className="hover:text-[var(--text-link)]" title="Edit Book">
                                 <AiOutlineEdit size={22} />
                             </Link>
-                            <Link to={`/books/delete/${book._id}`} className="hover:text-red-400" title="Delete Book">
+                            <Link to={`/books/delete/${book._id}`} className="hover:text-[var(--danger)]" title="Delete Book">
                                 <MdOutlineDelete size={22} />
                             </Link>
                         </div>
                     </div>
                 ))
             ) : (
-                <div className="col-span-full text-center text-teal-300 py-8">
+                <div className="col-span-full text-center text-[var(--text-link)] py-8">
                     <p className="mb-2">No books available.</p>
-                    <Link to="/books/create" className="underline hover:text-teal-400">
+                    <Link to="/books/create" className="underline hover:text-[var(--accent)]">
                         Add one now
                     </Link>
                 </div>
@@ -78,3 +78,4 @@ const Card = ({ books }) => {
 };
 
 export default Card;
+

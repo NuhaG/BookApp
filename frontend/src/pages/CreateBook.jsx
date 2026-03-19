@@ -98,7 +98,7 @@ const CreateBook = () => {
 
   return (
     <div className="min-h-screen bg-[var(--bg-app)] p-3 md:p-5">
-      <div className="mx-auto max-w-7xl overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--panel-bg)] shadow-[0_8px_26px_rgba(0,0,0,0.35)]">
+      <div className="mx-auto max-w-7xl overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--panel-bg)] shadow-[var(--shadow-elev)]">
         <NavBar />
 
         <div className="m-4 flex items-center justify-between border-b border-[var(--line)] pb-3">
@@ -119,7 +119,7 @@ const CreateBook = () => {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="mt-1 w-full p-2 rounded-md bg-[#0b1220] border border-[var(--line)] focus:border-[var(--accent)] focus:outline-none"
+                className="mt-1 w-full p-2 rounded-md bg-[var(--bg-input)] border border-[var(--line)] focus:border-[var(--accent)] focus:outline-none"
               />
             </label>
 
@@ -129,7 +129,7 @@ const CreateBook = () => {
                 type="text"
                 value={author}
                 onChange={(e) => setAuthor(e.target.value)}
-                className="mt-1 w-full p-2 rounded-md bg-[#0b1220] border border-[var(--line)] focus:border-[var(--accent)] focus:outline-none"
+                className="mt-1 w-full p-2 rounded-md bg-[var(--bg-input)] border border-[var(--line)] focus:border-[var(--accent)] focus:outline-none"
               />
             </label>
 
@@ -139,7 +139,7 @@ const CreateBook = () => {
                 type="text"
                 value={publishedYear}
                 onChange={(e) => setPublishedYear(e.target.value)}
-                className="mt-1 w-full p-2 rounded-md bg-[#0b1220] border border-[var(--line)] focus:border-[var(--accent)] focus:outline-none"
+                className="mt-1 w-full p-2 rounded-md bg-[var(--bg-input)] border border-[var(--line)] focus:border-[var(--accent)] focus:outline-none"
               />
             </label>
 
@@ -149,7 +149,7 @@ const CreateBook = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
-                className="mt-1 w-full p-2 rounded-md bg-[#0b1220] border border-[var(--line)] focus:border-[var(--accent)] focus:outline-none"
+                className="mt-1 w-full p-2 rounded-md bg-[var(--bg-input)] border border-[var(--line)] focus:border-[var(--accent)] focus:outline-none"
               />
             </label>
 
@@ -159,7 +159,7 @@ const CreateBook = () => {
                 type="file"
                 accept="image/*"
                 onChange={handleCoverFileChange}
-                className="mt-1 w-full p-2 rounded-md bg-[#0b1220] border border-[var(--line)] focus:border-[var(--accent)] focus:outline-none"
+                className="mt-1 w-full p-2 rounded-md bg-[var(--bg-input)] border border-[var(--line)] focus:border-[var(--accent)] focus:outline-none"
               />
               <p className="text-xs text-[var(--text-soft)] mt-1">Max file size: 5MB.</p>
             </label>
@@ -170,7 +170,7 @@ const CreateBook = () => {
                 type="text"
                 value={coverImg}
                 onChange={(e) => setCoverImg(e.target.value)}
-                className="mt-1 w-full p-2 rounded-md bg-[#0b1220] border border-[var(--line)] focus:border-[var(--accent)] focus:outline-none"
+                className="mt-1 w-full p-2 rounded-md bg-[var(--bg-input)] border border-[var(--line)] focus:border-[var(--accent)] focus:outline-none"
                 placeholder="https://..."
               />
             </label>
@@ -192,7 +192,7 @@ const CreateBook = () => {
                 multiple
                 value={genre}
                 onChange={(e) => setGenre(Array.from(e.target.selectedOptions).map((o) => o.value))}
-                className="mt-1 w-full p-2 rounded-md bg-[#0b1220] border border-[var(--line)] focus:border-[var(--accent)] focus:outline-none"
+                className="mt-1 w-full p-2 rounded-md bg-[var(--bg-input)] border border-[var(--line)] focus:border-[var(--accent)] focus:outline-none"
               >
                 {GENRES.map((g) => (
                   <option key={g} value={g}>
@@ -206,7 +206,7 @@ const CreateBook = () => {
 
           <button
             onClick={handleSaveBook}
-            className="w-full mt-6 bg-[var(--accent)] hover:bg-blue-500 text-white font-semibold py-2 rounded-md transition-colors"
+            className="w-full mt-6 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--text-inverse)] font-semibold py-2 rounded-md transition-colors"
           >
             Save
           </button>
@@ -220,5 +220,7 @@ const CreateBook = () => {
 };
 
 export default CreateBook;
+
+
 
 

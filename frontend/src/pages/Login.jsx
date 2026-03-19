@@ -29,12 +29,13 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-app)] p-3 md:p-5 text-[var(--text-main)]">
-      <NavBar />
-      <div className="max-w-7xl mx-auto rounded-xl border border-[var(--line)] bg-[var(--panel-bg)] p-6">
-        <h1 className="mb-6 text-center text-3xl font-bold text-[var(--text-main)] md:text-left">
-          Login
-        </h1>
+    <div className="min-h-screen bg-[var(--bg-app)] p-3 md:p-5">
+      <div className="mx-auto max-w-7xl overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--panel-bg)] shadow-[var(--shadow-elev)] pbi-4">
+        <NavBar />
+
+        <div className="m-4 flex items-center justify-between border-b border-[var(--line)] pb-3">
+          <h1 className="text-2xl font-bold text-[var(--text-main)]">Login</h1>
+        </div>
 
         {loading && (
           <div className="mb-4 flex justify-center">
@@ -53,7 +54,7 @@ const Login = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 w-full rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
+                className="mt-1 w-full rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
               />
             </label>
 
@@ -63,7 +64,7 @@ const Login = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 w-full rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
+                className="mt-1 w-full rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
               />
             </label>
           </div>
@@ -71,14 +72,14 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="mt-6 w-full rounded-md bg-[var(--accent)] py-2 font-semibold text-white transition-colors hover:bg-blue-500 disabled:opacity-60"
+            className="mt-6 w-full rounded-md bg-[var(--accent)] py-2 font-semibold text-[var(--text-inverse)] transition-colors hover:bg-[var(--accent-hover)] disabled:opacity-60"
           >
             Login
           </button>
 
           <p className="mt-4 text-center text-sm text-[var(--text-soft)]">
             Don&apos;t have an account?{" "}
-            <Link to="/register" className="text-blue-300 underline hover:text-blue-200">
+            <Link to="/register" className="text-[var(--text-link)] underline hover:text-[var(--text-brand)]">
               Register
             </Link>
           </p>

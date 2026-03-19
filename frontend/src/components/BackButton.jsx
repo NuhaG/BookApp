@@ -8,7 +8,7 @@ const BackButton = () => {
   return (
     <button
       onClick={() => navigate(-1)}
-      className="flex items-center gap-2 rounded-md border border-[var(--line)] bg-[#111b2d] px-3 py-2 text-[var(--text-soft)] hover:text-white hover:bg-[#1a2940] transition-colors"
+      className="flex items-center gap-2 rounded-md border border-[var(--line)] bg-[var(--bg-surface-alt)] px-3 py-2 text-[var(--text-soft)] hover:text-[var(--text-inverse)] hover:bg-[var(--bg-hover)] transition-colors"
     >
       <HiArrowLeft className="w-5 h-5" />
       <span className="hidden sm:inline">Back</span>
@@ -17,3 +17,5 @@ const BackButton = () => {
 };
 
 export default BackButton;
+
+

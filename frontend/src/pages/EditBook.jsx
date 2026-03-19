@@ -146,7 +146,7 @@ const EditBook = () => {
 
   return (
     <div className="min-h-screen bg-[var(--bg-app)] p-3 md:p-5">
-      <div className="mx-auto max-w-7xl overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--panel-bg)] shadow-[0_8px_26px_rgba(0,0,0,0.35)]">
+      <div className="mx-auto max-w-7xl overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--panel-bg)] shadow-[var(--shadow-elev)]">
         <NavBar />
 
         <div className="m-4 flex items-center justify-between border-b border-[var(--line)] pb-3">
@@ -167,7 +167,7 @@ const EditBook = () => {
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="mt-1 w-full rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
+                    className="mt-1 w-full rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
                   />
                 </label>
 
@@ -177,7 +177,7 @@ const EditBook = () => {
                     type="text"
                     value={author}
                     onChange={(e) => setAuthor(e.target.value)}
-                    className="mt-1 w-full rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
+                    className="mt-1 w-full rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
                   />
                 </label>
 
@@ -187,7 +187,7 @@ const EditBook = () => {
                     type="text"
                     value={publishedYear}
                     onChange={(e) => setPublishedYear(e.target.value)}
-                    className="mt-1 w-full rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
+                    className="mt-1 w-full rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
                   />
                 </label>
 
@@ -197,7 +197,7 @@ const EditBook = () => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={3}
-                    className="mt-1 w-full rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
+                    className="mt-1 w-full rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
                   />
                 </label>
 
@@ -207,7 +207,7 @@ const EditBook = () => {
                     type="file"
                     accept="image/*"
                     onChange={handleCoverFileChange}
-                    className="mt-1 w-full rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
+                    className="mt-1 w-full rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
                   />
                   <p className="mt-1 text-xs text-[var(--text-soft)]">Max file size: 5MB.</p>
                 </label>
@@ -218,7 +218,7 @@ const EditBook = () => {
                     type="text"
                     value={coverImg}
                     onChange={(e) => setCoverImg(e.target.value)}
-                    className="mt-1 w-full rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
+                    className="mt-1 w-full rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
                     placeholder="https://..."
                   />
                 </label>
@@ -240,7 +240,7 @@ const EditBook = () => {
                     multiple
                     value={genre}
                     onChange={(e) => setGenre(Array.from(e.target.selectedOptions).map((o) => o.value))}
-                    className="mt-1 w-full rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
+                    className="mt-1 w-full rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
                   >
                     {GENRES.map((g) => (
                       <option key={g} value={g}>
@@ -252,7 +252,7 @@ const EditBook = () => {
                 </label>
               </div>
 
-              <div className="rounded-md border border-[var(--line)] bg-[#0d1627] p-4">
+              <div className="rounded-md border border-[var(--line)] bg-[var(--bg-muted)] p-4">
                 <h2 className="mb-3 text-lg font-semibold text-[var(--text-main)]">Publish Chapter</h2>
                 <div className="flex flex-col gap-3">
                   <label className="text-sm text-[var(--text-soft)]">
@@ -262,7 +262,7 @@ const EditBook = () => {
                       min="1"
                       value={chapterNumber}
                       onChange={(e) => setChapterNumber(e.target.value)}
-                      className="mt-1 w-full rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
+                      className="mt-1 w-full rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
                     />
                   </label>
 
@@ -272,7 +272,7 @@ const EditBook = () => {
                       type="text"
                       value={chapterTitle}
                       onChange={(e) => setChapterTitle(e.target.value)}
-                      className="mt-1 w-full rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
+                      className="mt-1 w-full rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
                     />
                   </label>
 
@@ -282,14 +282,14 @@ const EditBook = () => {
                       value={chapterContent}
                       onChange={(e) => setChapterContent(e.target.value)}
                       rows={8}
-                      className="mt-1 w-full rounded-md border border-[var(--line)] bg-[#0b1220] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
+                      className="mt-1 w-full rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-2 text-[var(--text-main)] focus:border-[var(--accent)] focus:outline-none"
                     />
                   </label>
 
                   <button
                     onClick={handlePublishChapter}
                     disabled={chapterSaving}
-                    className="w-full rounded-md bg-[var(--accent)] py-2 font-semibold text-white transition-colors hover:bg-blue-500 disabled:opacity-60"
+                    className="w-full rounded-md bg-[var(--accent)] py-2 font-semibold text-[var(--text-inverse)] transition-colors hover:bg-[var(--accent-hover)] disabled:opacity-60"
                   >
                     {chapterSaving ? 'Publishing...' : 'Publish Chapter'}
                   </button>
@@ -297,7 +297,7 @@ const EditBook = () => {
               </div>
             </div>
 
-            <div className="mt-6 rounded-md border border-[var(--line)] bg-[#0d1627] p-4">
+            <div className="mt-6 rounded-md border border-[var(--line)] bg-[var(--bg-muted)] p-4">
               <h3 className="mb-3 text-md font-semibold text-[var(--text-main)]">Published Chapters ({chapters.length})</h3>
               {chapters.length === 0 ? (
                 <p className="text-sm text-[var(--text-soft)]">No chapters published yet.</p>
@@ -307,8 +307,8 @@ const EditBook = () => {
                     .slice()
                     .sort((a, b) => Number(a.chapterNumber) - Number(b.chapterNumber))
                     .map((chapter) => (
-                      <div key={chapter._id} className="rounded-md border border-[var(--line)] bg-[#0b1220] p-3">
-                        <p className="font-semibold text-[#dbeafe]">
+                      <div key={chapter._id} className="rounded-md border border-[var(--line)] bg-[var(--bg-input)] p-3">
+                        <p className="font-semibold text-[var(--text-strong)]">
                           Chapter {chapter.chapterNumber}: {chapter.title}
                         </p>
                       </div>
@@ -319,7 +319,7 @@ const EditBook = () => {
 
             <button
               onClick={handleEditBook}
-              className="mt-6 w-full rounded-md bg-[var(--accent)] py-2 font-semibold text-white transition-colors hover:bg-blue-500"
+              className="mt-6 w-full rounded-md bg-[var(--accent)] py-2 font-semibold text-[var(--text-inverse)] transition-colors hover:bg-[var(--accent-hover)]"
             >
               Save
             </button>
@@ -334,5 +334,7 @@ const EditBook = () => {
 };
 
 export default EditBook;
+
+
 
 

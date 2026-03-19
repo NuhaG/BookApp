@@ -10,24 +10,24 @@ const BookModel = ({ book, onClose }) => {
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="bg-gray-900 text-white w-11/12 max-w-lg p-6 rounded-lg shadow-lg relative border border-teal-500"
+                className="bg-[var(--card-bg)] text-[var(--text-inverse)] w-11/12 max-w-lg p-6 rounded-lg shadow-lg relative border border-[var(--accent)]"
             >
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-white"
+                    className="absolute top-4 right-4 text-[var(--text-soft)] hover:text-[var(--text-inverse)]"
                 >
                     <AiOutlineClose size={22} />
                 </button>
 
                 <div className="flex items-center gap-3 mb-4">
-                    <PiBookOpenTextLight size={28} className="text-teal-400" />
-                    <h2 className="text-2xl font-semibold text-teal-300">{book.title}</h2>
+                    <PiBookOpenTextLight size={28} className="text-[var(--accent)]" />
+                    <h2 className="text-2xl font-semibold text-[var(--text-link)]">{book.title}</h2>
                 </div>
-                <p className="flex items-center gap-2 text-gray-400">
+                <p className="flex items-center gap-2 text-[var(--text-soft)]">
                     <BiUserCircle size={20} /> Author: {book.author}
                 </p>
-                <p className="text-gray-500 text-sm mt-2">Year: {book.publishedYear}</p>
-                <p className="text-gray-500 text-sm mt-2">
+                <p className="text-[var(--text-muted-2)] text-sm mt-2">Year: {book.publishedYear}</p>
+                <p className="text-[var(--text-muted-2)] text-sm mt-2">
                     Rating:{" "}
                     {typeof book.ratingsAverage === "number"
                         ? book.ratingsAverage.toFixed(1)
@@ -39,7 +39,7 @@ const BookModel = ({ book, onClose }) => {
                         {book.genre.map((g) => (
                             <span
                                 key={g}
-                                className="text-xs px-2 py-1 rounded-full bg-black/30 border border-gray-700 text-teal-200"
+                                className="text-xs px-2 py-1 rounded-full bg-[var(--overlay-dim)] border border-[var(--line)] text-[var(--text-brand)]"
                             >
                                 {g}
                             </span>
@@ -48,8 +48,8 @@ const BookModel = ({ book, onClose }) => {
                 ) : null}
 
                 <div className="mt-5">
-                    <h3 className="text-lg font-semibold text-teal-300 mb-2">Description:</h3>
-                    <p className="text-gray-300 text-sm leading-relaxed">
+                    <h3 className="text-lg font-semibold text-[var(--text-link)] mb-2">Description:</h3>
+                    <p className="text-[var(--text-main)] text-sm leading-relaxed">
                         {book.description ? book.description : "No description provided."}
                     </p>
                 </div>
@@ -59,3 +59,4 @@ const BookModel = ({ book, onClose }) => {
 };
 
 export default BookModel;
+
