@@ -9,7 +9,7 @@ class APIFeatures {
   // Apply filtering after removing reserved query params.
   filter() {
     const queryObj = { ...this.queryString };
-    const excludedFields = ["page", "sort", "limit", "fields"];
+    const excludedFields = ["page", "sort", "limit", "fields", "search"];
     excludedFields.forEach((el) => delete queryObj[el]);
 
     // Convert comparison operators to Mongo syntax ([gte] -> $gte).
@@ -26,10 +26,20 @@ class APIFeatures {
   // Apply sorting from query string, newest first by default.
   sort() {
     if (this.queryString.sort) {
-      const sortBy = this.queryString.sort.split(",").join(" ");
+      const sortFields = this.queryString.sort
+        .split(",")
+        .map((field) => field.trim())
+        .filter(Boolean);
+
+      // Add a deterministic tie-breaker to avoid unstable pagination.
+      if (!sortFields.some((field) => field === "_id" || field === "-_id")) {
+        sortFields.push("_id");
+      }
+
+      const sortBy = sortFields.join(" ");
       this.query = this.query.sort(sortBy);
     } else {
-      this.query = this.query.sort("-createdAt");
+      this.query = this.query.sort("-createdAt _id");
     }
 
     return this;

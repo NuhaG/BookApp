@@ -9,7 +9,7 @@ import NavBar from "../components/NavBar";
 const renderStars = (rating) => {
   const safe = Math.max(0, Math.min(5, Number(rating) || 0));
   const rounded = Math.round(safe);
-  return "*****".slice(0, rounded) + "-----".slice(0, 5 - rounded);
+  return "\u2B50\u2B50\u2B50\u2B50\u2B50".slice(0, rounded) + "\u2606\u2606\u2606\u2606\u2606".slice(0, 5 - rounded);
 };
 
 const Home = () => {
@@ -33,18 +33,9 @@ const Home = () => {
   const queryParams = useMemo(() => {
     const params = { sort, page, limit };
     if (genre) params.genre = genre;
+    if (search.trim()) params.search = search.trim();
     return params;
-  }, [genre, limit, page, sort]);
-
-  const visibleBooks = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return books;
-    return books.filter((b) => {
-      const title = String(b.title || "").toLowerCase();
-      const author = String(b.author || "").toLowerCase();
-      return title.includes(q) || author.includes(q);
-    });
-  }, [books, search]);
+  }, [genre, limit, page, search, sort]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -75,7 +66,7 @@ const Home = () => {
       });
 
     return () => controller.abort();
-  }, [limit, queryParams]);
+  }, [queryParams]);
 
   return (
     <div className="min-h-screen bg-[var(--bg-app)] p-3 md:p-5">
@@ -89,7 +80,10 @@ const Home = () => {
             <div className="mt-3 grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
               <input
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                  setPage(1);
+                  setSearch(e.target.value);
+                }}
                 className="rounded-md border border-[var(--line)] bg-[var(--bg-input)] px-3 py-1.5 text-sm text-[var(--text-main)] outline-none focus:border-[var(--accent)]"
                 placeholder="Search title/author"
               />
@@ -145,11 +139,11 @@ const Home = () => {
             <div className="py-10">
               <Loader />
             </div>
-          ) : visibleBooks.length === 0 ? (
+          ) : books.length === 0 ? (
             <p className="py-10 text-center text-sm text-[var(--text-soft)]">No books found.</p>
           ) : (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              {visibleBooks.map((book) => {
+              {books.map((book) => {
                 const ratingText = typeof book.ratingsAverage === "number" ? book.ratingsAverage.toFixed(1) : "0.0";
                 return (
                   <Link

@@ -8,45 +8,41 @@ A full-stack MERN application for discovering books, publishing chapters, and ma
 
 ### 👨‍🎓 Reader Experience
 
-* Browse books from the Explore page
-* Filter, sort, and paginate results
-* Select page size (`6`, `12`, `24`) with proper navigation controls
-* Preview books with latest reviews directly from the list view
-* View detailed book pages with:
-
-  * chapter reading (modal overlay)
-  * reviews
-* Create, edit, and delete reviews
+- Browse books from the Explore page
+- Filter, sort, and paginate results
+- Select page size (`6`, `12`, `24`) with proper navigation controls
+- View detailed book pages with chapter reading and reviews
+- Create, edit, and delete reviews
 
 ---
 
 ### ✍️ Author Experience
 
-* Add books with metadata and optional cover upload
-* Automatically continue to edit flow after creation
-* Manage personal catalog (`My Books`)
-* Edit and delete books
-* Publish chapters incrementally
+- Add books with metadata and optional cover upload
+- Automatically continue to edit flow after creation
+- Manage personal catalog (`My Books`)
+- Edit and delete books
+- Publish chapters incrementally
 
 ---
 
 ### ⚙️ Backend Capabilities
 
-* JWT Authentication (`/auth/register`, `/auth/login`, `/auth/me`)
-* Role-based authorization and ownership guards
-* Advanced query handling:
+- JWT Authentication (`/auth/register`, `/auth/login`, `/auth/me`)
+- Role-based authorization and ownership guards — authenticated users can manage their own books, chapters, and reviews; admins can manage all resources
+- Advanced query handling:
+  - filtering
+  - sorting
+  - pagination
+  - field selection
 
-  * filtering
-  * sorting
-  * pagination
-  * field selection
-* Aggregation pipelines:
+- Aggregation pipelines:
+  - trending books
+  - review statistics
 
-  * trending books
-  * review statistics
-* Nested routes for reviews
-* Chapter publishing system
-* Image uploads using Multer (stored locally in `/uploads/covers`)
+- Nested routes for reviews
+- Chapter publishing system
+- Image uploads using Multer (stored locally in `/uploads/covers`)
 
 ---
 
@@ -54,19 +50,19 @@ A full-stack MERN application for discovering books, publishing chapters, and ma
 
 ### 🧩 Backend
 
-* Node.js
-* Express
-* MongoDB + Mongoose
-* JWT (`jsonwebtoken`)
-* bcrypt
-* multer
+- Node.js
+- Express
+- MongoDB + Mongoose
+- JWT (`jsonwebtoken`)
+- bcrypt
+- multer
 
 ### 🎨 Frontend
 
-* React (Vite)
-* React Router
-* Axios
-* Tailwind CSS
+- React (Vite)
+- React Router
+- Axios
+- Tailwind CSS
 
 ---
 
@@ -118,6 +114,13 @@ VITE_API_URL=http://localhost:5555
 ---
 
 ## ▶️ Running Locally
+
+### Clone The Repo
+
+```bash
+git clone https://github.com/NuhaG/BookApp.git
+cd BookApp
+```
 
 ### Backend
 

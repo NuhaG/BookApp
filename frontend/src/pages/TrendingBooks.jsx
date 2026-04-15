@@ -8,7 +8,7 @@ import { resolveCoverImageSrc } from "../utils/images";
 const renderStars = (rating) => {
   const safe = Math.max(0, Math.min(5, Number(rating) || 0));
   const rounded = Math.round(safe);
-  return "*****".slice(0, rounded) + "-----".slice(0, 5 - rounded);
+  return "\u2B50\u2B50\u2B50\u2B50\u2B50".slice(0, rounded) + "\u2606\u2606\u2606\u2606\u2606".slice(0, 5 - rounded);
 };
 
 const TrendingBooks = () => {
@@ -101,5 +101,6 @@ const TrendingBooks = () => {
 };
 
 export default TrendingBooks;
+
 
 

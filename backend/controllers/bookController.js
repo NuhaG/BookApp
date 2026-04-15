@@ -6,6 +6,21 @@ const path = require("path");
 // utility for filter, sort, field limit, paginate from query params
 const APIFeatures = require("../utils/apiFeatures");
 
+// Escape regex metacharacters so user input is treated as plain text.
+const escapeRegex = (value = "") =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// Build case-insensitive title/author search query.
+const buildTextSearchQuery = (rawSearch) => {
+  const search = String(rawSearch || "").trim();
+  if (!search) return {};
+
+  const regex = new RegExp(escapeRegex(search), "i");
+  return {
+    $or: [{ title: regex }, { author: regex }],
+  };
+};
+
 // Normalize genre input from either JSON arrays, repeated fields, or plain strings.
 const normalizeGenre = (rawGenre) => {
   if (rawGenre === undefined) return undefined;
@@ -25,7 +40,7 @@ const normalizeGenre = (rawGenre) => {
           return parsed.map((genre) => String(genre).trim()).filter(Boolean);
         }
       } catch (err) {
-        console.log(err.message);        
+        console.log(err.message);
       }
     }
 
@@ -38,12 +53,20 @@ const normalizeGenre = (rawGenre) => {
 // Build a MongoDB filter object mirroring APIFeatures.filter().
 const buildFilterQuery = (queryString) => {
   const queryObj = { ...queryString };
-  const excludedFields = ["page", "sort", "limit", "fields"];
+  const excludedFields = ["page", "sort", "limit", "fields", "search"];
   excludedFields.forEach((el) => delete queryObj[el]);
 
   let parsed = JSON.stringify(queryObj);
   parsed = parsed.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
   return JSON.parse(parsed);
+};
+
+const parseBoolean = (value) => {
+  if (value === undefined || value === null) return undefined;
+  if (typeof value === "boolean") return value;
+  if (value === "true" || value === 1 || value === "1") return true;
+  if (value === "false" || value === 0 || value === "0") return false;
+  return undefined;
 };
 
 // Resolve the public cover path for locally stored uploads.
@@ -155,13 +178,14 @@ const getBooks = asyncHandler(async (req, res) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 100;
   const filterQuery = buildFilterQuery(req.query);
+  const textSearchQuery = buildTextSearchQuery(req.query.search);
+  const finalFilterQuery = { ...filterQuery, ...textSearchQuery };
 
-  const total = await Book.countDocuments(filterQuery);
+  const total = await Book.countDocuments(finalFilterQuery);
   const totalPages = Math.max(1, Math.ceil(total / limit));
 
   // Build Mongoose query with filtering, sorting, field limiting, and pagination.
-  const features = new APIFeatures(Book.find(), req.query)
-    .filter()
+  const features = new APIFeatures(Book.find(finalFilterQuery), req.query)
     .sort()
     .limitFields()
     .paginate();
@@ -287,21 +311,127 @@ const addChapter = asyncHandler(async (req, res) => {
     throw new Error("A chapter with this chapterNumber already exists");
   }
 
+  const isPublishedValue = parseBoolean(req.body.isPublished);
+  const isPublished = isPublishedValue === undefined ? true : isPublishedValue;
+
   book.chapters.push({
     title,
     content,
     chapterNumber: parsedChapterNumber,
-    isPublished: req.body.isPublished !== false,
-    publishedAt: new Date(),
+    isPublished,
+    publishedAt: isPublished ? new Date() : null,
   });
 
-  book.chapters.sort((a, b) => Number(a.chapterNumber) - Number(b.chapterNumber));
+  book.chapters.sort(
+    (a, b) => Number(a.chapterNumber) - Number(b.chapterNumber),
+  );
   await book.save();
 
   res.status(201).json({
     success: true,
     message: "Chapter published successfully",
     book,
+  });
+});
+
+// update an existing chapter (supports drafts and publishing transitions)
+const updateChapter = asyncHandler(async (req, res) => {
+  const { chapterId, id } = req.params;
+  const { title, content, chapterNumber, isPublished } = req.body;
+
+  const book = await Book.findById(id);
+  if (!book) {
+    res.status(404);
+    throw new Error("Book not found");
+  }
+
+  const chapter = book.chapters.id(chapterId);
+  if (!chapter) {
+    res.status(404);
+    throw new Error("Chapter not found");
+  }
+
+  if (title !== undefined) chapter.title = title;
+  if (content !== undefined) chapter.content = content;
+
+  if (chapterNumber !== undefined) {
+    const parsedChapterNumber = Number(chapterNumber);
+    if (!Number.isInteger(parsedChapterNumber) || parsedChapterNumber < 1) {
+      res.status(400);
+      throw new Error("chapterNumber must be a positive integer");
+    }
+
+    const duplicateNumber = (book.chapters || []).some(
+      (entry) =>
+        String(entry._id) !== String(chapterId) &&
+        Number(entry.chapterNumber) === parsedChapterNumber,
+    );
+
+    if (duplicateNumber) {
+      res.status(400);
+      throw new Error("A chapter with this chapterNumber already exists");
+    }
+
+    chapter.chapterNumber = parsedChapterNumber;
+  }
+
+  if (isPublished !== undefined) {
+    const nextPublished = parseBoolean(isPublished);
+    if (nextPublished !== undefined) {
+      chapter.isPublished = nextPublished;
+      chapter.publishedAt = nextPublished
+        ? chapter.publishedAt || new Date()
+        : null;
+    }
+  }
+
+  book.chapters.sort(
+    (a, b) => Number(a.chapterNumber) - Number(b.chapterNumber),
+  );
+  await book.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Chapter updated successfully",
+    book,
+  });
+});
+
+// Admin utility: fix all chapters missing/falsy isPublished (for migrated data)
+const fixChaptersPublishState = asyncHandler(async (req, res) => {
+  const books = await Book.find({});
+  let updatedCount = 0;
+
+  for (const book of books) {
+    let bookUpdated = false;
+    if (Array.isArray(book.chapters)) {
+      for (const chapter of book.chapters) {
+        const currentValue = chapter.isPublished;
+        // Fix if undefined, null, false, "false", 0, or "0"
+        if (
+          currentValue === undefined ||
+          currentValue === null ||
+          currentValue === false ||
+          currentValue === 0 ||
+          (typeof currentValue === "string" &&
+            ["false", "0", "no"].includes(currentValue.toLowerCase().trim()))
+        ) {
+          chapter.isPublished = true;
+          chapter.publishedAt = chapter.publishedAt || new Date();
+          bookUpdated = true;
+          updatedCount++;
+        }
+      }
+    }
+    if (bookUpdated) {
+      await book.save();
+    }
+  }
+
+  res.status(200).json({
+    success: true,
+    message: `Fixed publish state for ${updatedCount} chapters`,
+    updated: updatedCount,
   });
 });
 
@@ -313,4 +443,6 @@ module.exports = {
   updateBook,
   deleteBook,
   addChapter,
+  updateChapter,
+  fixChaptersPublishState,
 };

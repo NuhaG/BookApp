@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import Loader from '../components/Loader';
 import { api, getApiErrorMessage } from '../api/client';
@@ -11,7 +11,7 @@ const ShowBook = () => {
   const renderStars = (ratingValue) => {
     const safe = Math.max(0, Math.min(5, Number(ratingValue) || 0));
     const rounded = Math.round(safe);
-    return '*****'.slice(0, rounded) + '-----'.slice(0, 5 - rounded);
+    return '\u2B50\u2B50\u2B50\u2B50\u2B50'.slice(0, rounded) + '\u2606\u2606\u2606\u2606\u2606'.slice(0, 5 - rounded);
   };
 
   const [book, setBook] = useState({});
@@ -23,8 +23,6 @@ const ShowBook = () => {
   const [editing, setEditing] = useState(null);
   const [editText, setEditText] = useState('');
   const [editRating, setEditRating] = useState('5');
-  const [chapterModalOpen, setChapterModalOpen] = useState(false);
-  const [modalChapter, setModalChapter] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -60,18 +58,11 @@ const ShowBook = () => {
   }, [loadBook, loadReviews]);
 
   const sortedChapters = Array.isArray(book.chapters)
-    ? book.chapters.slice().sort((a, b) => Number(a.chapterNumber) - Number(b.chapterNumber))
+    ? book.chapters
+      .filter((chapter) => chapter?.isPublished)
+      .slice()
+      .sort((a, b) => Number(a.chapterNumber) - Number(b.chapterNumber))
     : [];
-
-  const openChapter = (chapter) => {
-    setModalChapter(chapter);
-    setChapterModalOpen(true);
-  };
-
-  const closeChapterModal = () => {
-    setChapterModalOpen(false);
-    setModalChapter(null);
-  };
 
   const requireLogin = () => {
     navigate('/login', { replace: true, state: { from: location.pathname } });
@@ -209,7 +200,7 @@ const ShowBook = () => {
                 </div>
 
                 <div className="pt-2">
-                  <BackButton />
+                  <BackButton to="/explore" />
                 </div>
               </div>
             </div>
@@ -226,12 +217,12 @@ const ShowBook = () => {
                       <p className="font-semibold text-[var(--text-strong)]">
                         Chapter {chapter.chapterNumber}: {chapter.title}
                       </p>
-                      <button
-                        onClick={() => openChapter(chapter)}
-                        className="mt-2 rounded-md bg-[var(--accent)] px-3 py-1 text-xs font-semibold text-[var(--text-inverse)] hover:bg-[var(--accent-hover)]"
+                      <Link
+                        to={`/books/details/${id}/chapters/${chapter._id}`}
+                        className="mt-2 inline-block rounded-md bg-[var(--accent)] px-3 py-1 text-xs font-semibold text-[var(--text-inverse)] hover:bg-[var(--accent-hover)]"
                       >
                         Read Chapter
-                      </button>
+                      </Link>
                     </div>
                   ))}
                 </div>
@@ -363,33 +354,6 @@ const ShowBook = () => {
         )}
       </div>
 
-      {chapterModalOpen && modalChapter ? (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[var(--overlay-backdrop)] p-4" onClick={closeChapterModal}>
-          <div
-            className="max-h-[85vh] w-full max-w-3xl overflow-auto rounded-xl border border-[var(--line)] bg-[var(--card-bg)] p-5 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-start justify-between gap-3 border-b border-[var(--line)] pb-3">
-              <div>
-                <p className="text-xs uppercase tracking-wider text-[var(--text-soft)]">Reading</p>
-                <h3 className="text-xl font-semibold text-[var(--text-main)]">
-                  Chapter {modalChapter.chapterNumber}: {modalChapter.title}
-                </h3>
-              </div>
-              <button
-                onClick={closeChapterModal}
-                className="rounded-md border border-[var(--line)] bg-[var(--bg-surface-alt)] px-3 py-1 text-sm text-[var(--text-soft)] hover:text-[var(--text-inverse)]"
-              >
-                Close
-              </button>
-            </div>
-
-            <div className="mt-4 whitespace-pre-wrap text-[var(--text-soft)] leading-relaxed">
-              {modalChapter.content}
-            </div>
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 };

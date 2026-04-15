@@ -6,6 +6,7 @@ import CreateBook from './pages/CreateBook';
 import EditBook from './pages/EditBook';
 import DeleteBook from './pages/DeleteBook';
 import ShowBook from './pages/ShowBook';
+import ReadChapter from './pages/ReadChapter';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Reviews from './pages/Reviews';
@@ -26,6 +27,7 @@ const App = () => {
       <Route path='/books/edit/:id' element={<EditBook/>} />
       <Route path='/books/delete/:id' element={<DeleteBook/>} />
       <Route path='/books/details/:id' element={<ShowBook/>} />
+      <Route path='/books/details/:id/chapters/:chapterId' element={<ReadChapter />} />
     </Routes>
   )
 }
