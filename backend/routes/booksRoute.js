@@ -20,6 +20,10 @@ const reviewRouter = require("./reviewRoute");
 const reviewController = require("../controllers/reviewController");
 router.use("/:bookId/reviews", reviewRouter);
 
+// thread
+const threadRouter = require("./threadRoute");
+router.use("/:bookId/threads", threadRouter);
+
 // Admin utility: fix all chapters with missing/falsy isPublished
 router.post(
   "/admin/fix-chapters",
