@@ -23,6 +23,8 @@ const ShowBook = () => {
   const [editing, setEditing] = useState(null);
   const [editText, setEditText] = useState('');
   const [editRating, setEditRating] = useState('5');
+  const [threads, setThreads] = useState([]);
+  const [threadsLoading, setThreadsLoading] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -52,10 +54,20 @@ const ShowBook = () => {
       .finally(() => setReviewsLoading(false));
   }, [id]);
 
+  const loadThreads = useCallback(() => {
+    setThreadsLoading(true);
+    api
+      .get(`/books/${id}/threads`)
+      .then((res) => setThreads(res.data?.data || []))
+      .catch((err) => console.log(err))
+      .finally(() => setThreadsLoading(false));
+  }, [id]);
+
   useEffect(() => {
     loadBook();
     loadReviews();
-  }, [loadBook, loadReviews]);
+    loadThreads();
+  }, [loadBook, loadReviews, loadThreads]);
 
   const sortedChapters = Array.isArray(book.chapters)
     ? book.chapters
@@ -227,6 +239,49 @@ const ShowBook = () => {
                   ))}
                 </div>
               )}
+
+              <div className="mt-6 rounded-md border border-[var(--line)] bg-[var(--card-bg)] p-4 shadow-sm">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <h2 className="text-xl font-semibold text-[var(--text-main)]">Discussion Threads</h2>
+                  <Link
+                    to={`/books/details/${id}/discussions`}
+                    className="inline-flex items-center justify-center rounded-md bg-[var(--accent)] px-3 py-1 text-xs font-semibold text-[var(--text-inverse)] hover:bg-[var(--accent-hover)]"
+                  >
+                    Open discussion page
+                  </Link>
+                </div>
+
+                {threadsLoading ? (
+                  <div className="mt-4">
+                    <Loader />
+                  </div>
+                ) : threads.length === 0 ? (
+                  <p className="mt-4 text-[var(--text-soft)]">No discussion threads yet. Open the discussion page to start one.</p>
+                ) : (
+                  <div className="mt-4 space-y-3">
+                    {threads.slice(0, 3).map((thread) => (
+                      <Link
+                        key={thread._id}
+                        to={`/books/details/${id}/discussions`}
+                        className="block rounded-md border border-[var(--line)] bg-[var(--bg-muted)] p-3 transition hover:border-[var(--accent)]"
+                      >
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                          <p className="font-semibold text-[var(--text-strong)]">{thread.title}</p>
+                          <span className="text-xs text-[var(--text-soft)]">
+                            {thread.createdBy?.name || 'Anonymous'} • {thread.createdAt ? new Date(thread.createdAt).toLocaleDateString() : ''}
+                          </span>
+                        </div>
+                        <p className="mt-2 text-sm text-[var(--text-soft)]">
+                          {thread.content?.slice(0, 130)}{thread.content?.length > 130 ? '...' : ''}
+                        </p>
+                      </Link>
+                    ))}
+                    {threads.length > 3 ? (
+                      <p className="text-xs text-[var(--text-soft)]">Showing latest 3 threads. Open the discussion page for the full list.</p>
+                    ) : null}
+                  </div>
+                )}
+              </div>
 
               <h2 className="mt-6 border-t border-[var(--line)] pt-4 text-xl font-semibold text-[var(--text-main)]">
                 Leave A Review

@@ -1,18 +1,18 @@
-# API Documentation (Backend)
+# API Documentation
+
 ## Overview
 
-This API powers the Book Discussion Platform backend, enabling authentication, book management, chapter publishing, and reviews.
+This backend API supports the MERN Book App with user authentication, book management, chapter publishing, reviews, discussion threads, and nested message replies.
 
 - Base URL: `http://localhost:5555`
 - Content-Type: `application/json`
 - Authentication: Bearer Token (JWT)
 
 ---
+
 ## File Storage
 
-- Covers stored at: `/uploads/covers`
-
-Public access:
+Book cover uploads are stored locally in `backend/uploads/covers` and served from:
 
 ```http
 GET /uploads/covers/<filename>
@@ -20,9 +20,7 @@ GET /uploads/covers/<filename>
 
 ---
 
-## Conventions
-
-### Auth Header
+## Auth Header
 
 Protected routes require:
 
@@ -32,9 +30,9 @@ Authorization: Bearer <token>
 
 ---
 
-### Response Format
+## Response Formats
 
-#### Success (Single Resource)
+### Success (single resource)
 
 ```json
 {
@@ -45,7 +43,7 @@ Authorization: Bearer <token>
 }
 ```
 
-#### Success (List)
+### Success (list)
 
 ```json
 {
@@ -65,7 +63,7 @@ Authorization: Bearer <token>
 }
 ```
 
-#### Error
+### Error
 
 ```json
 {
@@ -90,7 +88,7 @@ Authorization: Bearer <token>
 
 ---
 
-# Auth (`/auth`)
+# Auth
 
 ## POST `/auth/register`
 
@@ -112,13 +110,11 @@ Register a new user.
 {
   "success": true,
   "token": "...",
-  "data": {
-    "user": {
-      "id": "...",
-      "name": "...",
-      "email": "...",
-      "role": "user"
-    }
+  "user": {
+    "id": "...",
+    "name": "Alice",
+    "email": "alice@example.com",
+    "role": "user"
   }
 }
 ```
@@ -126,7 +122,8 @@ Register a new user.
 ---
 
 ## POST `/auth/login`
-Authenticate user and return token.
+
+Authenticate a user and return a JWT.
 
 ### Body
 
@@ -139,13 +136,15 @@ Authenticate user and return token.
 
 ### Response
 
-Same as `/auth/register`.
+Same structure as `/auth/register`.
 
 ---
 
 ## GET `/auth/me` (Protected)
 
-Get current authenticated user.
+Retrieve the current authenticated user.
+
+### Response
 
 ```json
 {
@@ -153,8 +152,8 @@ Get current authenticated user.
   "data": {
     "user": {
       "id": "...",
-      "name": "...",
-      "email": "...",
+      "name": "Alice",
+      "email": "alice@example.com",
       "role": "user"
     }
   }
@@ -163,23 +162,24 @@ Get current authenticated user.
 
 ---
 
-# Books (`/books`)
+# Books
 
 ## GET `/books`
 
-Retrieve all books (public).
+Retrieve all books. Supports filtering, sorting, field selection, and pagination.
 
-### Query Features
+### Query Parameters
 
-- Filtering: `publishedYear[gte]=2015`
-- Sorting: `sort=field,-otherField` (default: `-createdAt`)
-- Field selection: `fields=title,author,publishedYear`
-- Pagination: `page=1&limit=10`
+- `search=<text>` — case-insensitive title/author search
+- `publishedYear[gte]=<year>` — numeric filtering
+- `sort=field,-field` — sorting order
+- `fields=title,author` — field selection
+- `page=<number>&limit=<number>` — pagination
 
 ### Example
 
 ```http
-GET /books?publishedYear[gte]=2015&sort=-publishedYear&fields=title,author,publishedYear&page=1&limit=10
+GET /books?search=dune&sort=-publishedYear&page=1&limit=12
 ```
 
 ### Response
@@ -202,43 +202,25 @@ GET /books?publishedYear[gte]=2015&sort=-publishedYear&fields=title,author,publi
 }
 ```
 
-### Book Structure
-
-Each book may include:
-
-- `title`
-- `author`
-- `publishedYear`
-- `description`
-- `genre`
-- `coverImg`
-- `chapters`:
-  - `title`
-  - `content`
-  - `chapterNumber`
-  - `isPublished`
-  - `publishedAt`
-
 ---
 
 ## POST `/books` (Protected)
 
-Create a book.
+Create a new book.
 
 ### Body
+
+Supports JSON or `multipart/form-data`.
 
 ```json
 {
   "title": "Dune",
   "author": "Frank Herbert",
-  "publishedYear": 1965
+  "publishedYear": 1965,
+  "description": "A space epic...",
+  "genre": ["science-fiction", "adventure"]
 }
 ```
-
-### Notes
-
-- `createdBy` is derived from authenticated user
-- Supports JSON and `multipart/form-data` (`coverImg`, max 5MB)
 
 ### Response
 
@@ -256,12 +238,14 @@ Create a book.
 
 ## GET `/books/:id`
 
+Retrieve a single book by ID.
+
+### Response
+
 ```json
 {
   "success": true,
-  "data": {
-    "book": {}
-  }
+  "book": {}
 }
 ```
 
@@ -269,19 +253,36 @@ Create a book.
 
 ## PATCH `/books/:id` (Protected)
 
+Update a book you own or update any book as an admin.
+
+### Body
+
+```json
+{
+  "title": "Dune: Revised",
+  "description": "Updated description",
+  "genre": ["science-fiction"],
+  "coverImg": "/uploads/covers/new-cover.jpg"
+}
+```
+
+### Response
+
 ```json
 {
   "success": true,
   "message": "Book updated successfully",
-  "data": {
-    "book": {}
-  }
+  "book": {}
 }
 ```
 
 ---
 
 ## DELETE `/books/:id` (Protected)
+
+Delete a book you own or any book as an admin.
+
+### Response
 
 ```json
 {
@@ -293,6 +294,10 @@ Create a book.
 ---
 
 ## GET `/books/my` (Protected)
+
+Get the authenticated user's books.
+
+### Response
 
 ```json
 {
@@ -308,6 +313,10 @@ Create a book.
 
 ## GET `/books/trending`
 
+Get trending books based on recent review activity.
+
+### Response
+
 ```json
 {
   "success": true,
@@ -317,7 +326,7 @@ Create a book.
 }
 ```
 
-Each entry includes:
+Each trending entry includes:
 
 - `reviewCount`
 - `averageRating`
@@ -327,35 +336,68 @@ Each entry includes:
 
 ## POST `/books/:id/chapters` (Protected)
 
+Publish a new chapter for a book.
+
+### Body
+
 ```json
 {
   "title": "Chapter 1: Arrival",
   "content": "Long chapter text...",
-  "chapterNumber": 1
+  "chapterNumber": 1,
+  "isPublished": true
 }
 ```
 
-### Rules
+### Notes
 
-- `chapterNumber` must be unique per book
+- `chapterNumber` must be unique per book.
+- Duplicate chapter numbers are rejected.
+
+### Response
+
+```json
+{
+  "success": true,
+  "message": "Chapter published successfully",
+  "book": {}
+}
+```
 
 ---
 
 ## PATCH `/books/:id/chapters/:chapterId` (Protected)
 
+Update an existing chapter.
+
+### Body
+
+```json
+{
+  "title": "Chapter 1: New Title",
+  "content": "Updated text",
+  "chapterNumber": 2,
+  "isPublished": false
+}
+```
+
+### Response
+
 ```json
 {
   "success": true,
   "message": "Chapter updated successfully",
-  "data": {
-    "book": {}
-  }
+  "book": {}
 }
 ```
 
 ---
 
-## POST `/books/admin/fix-chapters` (Admin)
+## POST `/books/admin/fix-chapters` (Protected Admin)
+
+Fix missing or invalid chapter publish state across all books.
+
+### Response
 
 ```json
 {
@@ -367,9 +409,13 @@ Each entry includes:
 
 ---
 
-# Reviews (`/reviews`)
+# Reviews
 
 ## GET `/reviews`
+
+Retrieve all reviews.
+
+### Response
 
 ```json
 {
@@ -381,17 +427,18 @@ Each entry includes:
 }
 ```
 
-### Notes
+Reviews include populated:
 
-- Populated:
-  - `user` (name, email, role)
-  - `book` (title, author, publishedYear)
-
-- `inappropriate=true` reviews are filtered out
+- `user` (name, email, role)
+- `book` (title, author, publishedYear)
 
 ---
 
 ## POST `/reviews` (Protected)
+
+Create a review for a book.
+
+### Body
 
 ```json
 {
@@ -400,6 +447,8 @@ Each entry includes:
   "book": "<bookId>"
 }
 ```
+
+### Response
 
 ```json
 {
@@ -412,18 +461,24 @@ Each entry includes:
 
 ## PATCH `/reviews/:id` (Protected)
 
+Update a review you own or update any review as an admin.
+
+### Response
+
 ```json
 {
   "success": true,
-  "data": {
-    "review": {}
-  }
+  "review": {}
 }
 ```
 
 ---
 
 ## DELETE `/reviews/:id` (Protected)
+
+Soft delete a review.
+
+### Response
 
 ```json
 {
@@ -436,6 +491,10 @@ Each entry includes:
 
 ## GET `/reviews/review-stats`
 
+Get aggregated review statistics.
+
+### Response
+
 ```json
 {
   "success": true,
@@ -447,25 +506,190 @@ Each entry includes:
 
 ---
 
-## Nested Routes
+## Nested Review Routes
 
 - `GET /books/:bookId/reviews`
 - `POST /books/:bookId/reviews` (Protected)
 
 ---
 
-# 🔐 Authorization Rules
-- Books → only creator (`createdBy`) or `admin` can update/delete
-- Reviews → only author (`user`) or `admin` can update/delete
-- Banned users → `isBanned=true` blocks login and protected actions
+# Discussion Threads
+
+## GET `/books/:bookId/threads`
+
+Retrieve all non-deleted threads for a book.
+
+### Response
+
+```json
+{
+  "success": true,
+  "results": 3,
+  "data": []
+}
+```
 
 ---
 
-# ⚙️ Design Conventions
+## POST `/books/:bookId/threads` (Protected)
 
-- Resource-based URLs (nouns, not verbs)
-- Plural naming (`/books`, `/reviews`)
-- Consistent response structure
-- Stateless requests
-- Pagination support
-- JWT-based authentication
+Create a discussion thread.
+
+### Body
+
+```json
+{
+  "title": "Question about chapter 2",
+  "content": "I want to discuss the ending..."
+}
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "data": {}
+}
+```
+
+---
+
+## GET `/threads/:id`
+
+Retrieve a single thread by ID.
+
+### Response
+
+```json
+{
+  "success": true,
+  "data": {}
+}
+```
+
+---
+
+## PATCH `/threads/:id` (Protected)
+
+Update a thread.
+
+### Response
+
+```json
+{
+  "success": true,
+  "data": {}
+}
+```
+
+---
+
+## DELETE `/threads/:id` (Protected)
+
+Soft delete a thread.
+
+### Response
+
+```json
+{
+  "success": true,
+  "message": "Thread deleted successfully"
+}
+```
+
+---
+
+# Thread Messages
+
+## GET `/threads/:threadId/messages`
+
+Retrieve threaded messages for a thread.
+
+### Response
+
+```json
+{
+  "success": true,
+  "results": 2,
+  "data": []
+}
+```
+
+---
+
+## POST `/threads/:threadId/messages` (Protected)
+
+Create a message inside a thread.
+
+### Body
+
+```json
+{
+  "content": "This is a reply.",
+  "parentMessage": "<messageId>"
+}
+```
+
+### Notes
+
+- `parentMessage` is optional.
+- Cannot post in locked threads.
+
+### Response
+
+```json
+{
+  "success": true,
+  "data": {}
+}
+```
+
+---
+
+## PATCH `/messages/:id` (Protected)
+
+Update a message you own or update any message as an admin.
+
+### Response
+
+```json
+{
+  "success": true,
+  "data": {}
+}
+```
+
+---
+
+## DELETE `/messages/:id` (Protected)
+
+Soft delete a message.
+
+### Response
+
+```json
+{
+  "success": true,
+  "message": "Message deleted successfully"
+}
+```
+
+---
+
+# Authorization Rules
+
+- Books → only creator (`createdBy`) or `admin` may update/delete
+- Reviews → only author (`user`) or `admin` may update/delete
+- Threads → only creator or `admin` may update/delete
+- Messages → only creator or `admin` may update/delete
+- Banned users are blocked from login and protected actions
+
+---
+
+# Design Notes
+
+- Resource-based routes with nested reviews, threads, and messages
+- Consistent JSON response structure
+- JWT-based authentication for protected endpoints
+- Local file uploads served through Express static middleware

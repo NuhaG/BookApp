@@ -146,9 +146,8 @@ const Home = () => {
               {books.map((book) => {
                 const ratingText = typeof book.ratingsAverage === "number" ? book.ratingsAverage.toFixed(1) : "0.0";
                 return (
-                  <Link
+                  <article
                     key={book._id}
-                    to={`/books/details/${book._id}`}
                     className="rounded-md border border-[var(--line)] bg-[var(--card-bg)] p-2 text-left shadow-sm transition hover:shadow-md"
                   >
                     <div className="flex gap-3">
@@ -169,12 +168,23 @@ const Home = () => {
                         <p className="mt-1 text-xs text-[var(--text-soft)]">
                           {book.description || "No description available for this book yet."}
                         </p>
-                        <span className="mt-2 inline-block rounded bg-[var(--bg-chip)] px-2 py-1 text-xs font-semibold text-[var(--text-chip)]">
-                          Open Details
-                        </span>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          <Link
+                            to={`/books/details/${book._id}`}
+                            className="inline-block rounded bg-[var(--bg-chip)] px-2 py-1 text-xs font-semibold text-[var(--text-chip)] hover:bg-[var(--bg-hover)]"
+                          >
+                            Open Details
+                          </Link>
+                          <Link
+                            to={`/books/details/${book._id}/discussions`}
+                            className="inline-block rounded bg-[var(--accent)] px-2 py-1 text-xs font-semibold text-[var(--text-inverse)] hover:bg-[var(--accent-hover)]"
+                          >
+                            Discuss
+                          </Link>
+                        </div>
                       </div>
                     </div>
-                  </Link>
+                  </article>
                 );
               })}
             </div>

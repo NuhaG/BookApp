@@ -1,6 +1,6 @@
 # 📘 MERN Book App
 
-A full-stack MERN application for discovering books, publishing chapters, and managing reader reviews — designed with a strong focus on **backend architecture, API design, and real-world application flow**.
+A full-stack MERN application for discovering books, publishing chapters, managing discussion threads, and collecting reader reviews.
 
 ---
 
@@ -8,41 +8,39 @@ A full-stack MERN application for discovering books, publishing chapters, and ma
 
 ### 👨‍🎓 Reader Experience
 
-- Browse books from the Explore page
-- Filter, sort, and paginate results
-- Select page size (`6`, `12`, `24`) with proper navigation controls
-- View detailed book pages with chapter reading and reviews
-- Create, edit, and delete reviews
+- Browse and explore books with search, filters, sorting, and pagination
+- Read published chapters from a book details page
+- Join book discussions through threaded conversations
+- View and post reviews for books
+- Login and register with JWT-based authentication
 
 ---
 
 ### ✍️ Author Experience
 
-- Add books with metadata and optional cover upload
-- Automatically continue to edit flow after creation
-- Manage personal catalog (`My Books`)
-- Edit and delete books
-- Publish chapters incrementally
+- Create books with metadata and optional cover images
+- Edit and delete books you own
+- Publish and update chapters on your books
+- Manage a personal catalog in `My Books`
+
+---
+
+### 💬 Community and Discussions
+
+- Create discussion threads for each book
+- Post threaded messages within a thread
+- Soft-delete and moderate content via admin/owner controls
 
 ---
 
 ### ⚙️ Backend Capabilities
 
-- JWT Authentication (`/auth/register`, `/auth/login`, `/auth/me`)
-- Role-based authorization and ownership guards — authenticated users can manage their own books, chapters, and reviews; admins can manage all resources
-- Advanced query handling:
-  - filtering
-  - sorting
-  - pagination
-  - field selection
-
-- Aggregation pipelines:
-  - trending books
-  - review statistics
-
-- Nested routes for reviews
-- Chapter publishing system
-- Image uploads using Multer (stored locally in `/uploads/covers`)
+- JWT authentication with `/auth/register`, `/auth/login`, and `/auth/me`
+- Role-based authorization and ownership guards for books, reviews, threads, and messages
+- Nested routes for reviews, threads, and messages
+- Query utilities for filtering, sorting, field selection, and pagination
+- File upload support for book covers via Multer
+- Public uploads served from `/uploads/covers`
 
 ---
 
@@ -56,58 +54,65 @@ A full-stack MERN application for discovering books, publishing chapters, and ma
 - JWT (`jsonwebtoken`)
 - bcrypt
 - multer
+- cors
+- dotenv
 
 ### 🎨 Frontend
 
-- React (Vite)
-- React Router
+- React
+- Vite
+- React Router DOM
 - Axios
 - Tailwind CSS
+- React Icons
 
 ---
 
 ## 📂 Project Structure
 
-```id="ok4c0k"
+```text
 MERN-BookApp/
 ├── backend/
-│   ├── index.js
 │   ├── controllers/
 │   ├── middleware/
 │   ├── models/
 │   ├── routes/
-│   └── utils/
-│
+│   ├── uploads/
+│   ├── utils/
+│   ├── index.js
+│   └── package.json
 └── frontend/
-    ├── index.html
+    ├── public/
+    ├── src/
+    │   ├── api/
+    │   ├── components/
+    │   ├── pages/
+    │   └── utils/
+    ├── package.json
     ├── vite.config.js
-    └── src/
-        ├── api/
-        ├── components/
-        ├── pages/
-        └── utils/
+    └── index.html
 ```
 
 ---
 
 ## ⚙️ Environment Variables
 
-### 🔐 Backend (`.env`)
+### 🔐 Backend (`backend/.env`)
 
-```id="0qggzj"
+```env
 MONGO_URI=your_mongodb_connection_string
 PORT=5555
 JWT_SECRET=your_jwt_secret
 JWT_EXPIRES_IN=7d
 ```
 
-📌 Cover uploads are stored locally in `backend/uploads/covers`.
+> Book cover uploads are stored at `backend/uploads/covers` and served publicly from `/uploads/covers/<filename>`.
 
 ---
 
-### 🌐 Frontend (`.env`)
+### 🌐 Frontend (`frontend/.env`)
 
-```id="a1m2me"
+```env
 VITE_API_URL=http://localhost:5555
 ```
 
@@ -124,7 +129,7 @@ cd BookApp
 
 ### Backend
 
-```id="q5thp3"
+```bash
 cd backend
 npm install
 npm run dev
@@ -132,7 +137,7 @@ npm run dev
 
 ### Frontend
 
-```id="4yhl6o"
+```bash
 cd frontend
 npm install
 npm run dev
@@ -140,27 +145,23 @@ npm run dev
 
 ---
 
-# 📖 Documentation
+## 📖 Documentation
 
-Full API documentation with route details and request/response examples is available in [API.md](API.md).
+Detailed backend API documentation is available in [API.md](API.md).
 
 ---
 
-# 🤝 Contributing
+## 🤝 Contributing
 
-Contributions are welcome!
-
-If you'd like to improve the project:
+Contributions, bug fixes, and improvements are welcome.
 
 1. Fork the repository
 2. Create a feature branch
 3. Commit your changes
-4. Open a Pull Request
-
-Suggestions, improvements, and bug fixes are appreciated.
+4. Open a pull request
 
 ---
 
-# 📄 License
+## 📄 License
 
 This project is licensed under the **MIT License**.

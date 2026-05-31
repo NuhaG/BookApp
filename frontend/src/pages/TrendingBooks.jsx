@@ -83,12 +83,20 @@ const TrendingBooks = () => {
                     <p className="mt-1 text-xs text-[var(--rating)]">
                       {renderStars(entry.averageRating)} {avg} ({entry.reviewCount ?? 0} reviews)
                     </p>
-                    <Link
-                      to={`/books/details/${details._id}`}
-                      className="mt-3 inline-block rounded bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-[var(--text-inverse)] hover:bg-[var(--accent-hover)]"
-                    >
-                      Open Details
-                    </Link>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <Link
+                        to={`/books/details/${details._id}`}
+                        className="inline-block rounded bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-[var(--text-inverse)] hover:bg-[var(--accent-hover)]"
+                      >
+                        Open Details
+                      </Link>
+                      <Link
+                        to={`/books/details/${details._id}/discussions`}
+                        className="inline-block rounded bg-[var(--bg-chip)] px-3 py-1.5 text-xs font-semibold text-[var(--text-chip)] hover:bg-[var(--bg-hover)]"
+                      >
+                        Discuss
+                      </Link>
+                    </div>
                   </article>
                 );
               })}

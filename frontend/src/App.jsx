@@ -6,6 +6,7 @@ import CreateBook from './pages/CreateBook';
 import EditBook from './pages/EditBook';
 import DeleteBook from './pages/DeleteBook';
 import ShowBook from './pages/ShowBook';
+import Discussions from './pages/Discussions';
 import ReadChapter from './pages/ReadChapter';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -22,11 +23,12 @@ const App = () => {
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
       <Route path='/reviews' element={<Reviews />} />
-      <Route path='/books/create' element={<CreateBook/>} />
+      <Route path='/books/create' element={<CreateBook />} />
       <Route path='/my-books' element={<MyBooks />} />
-      <Route path='/books/edit/:id' element={<EditBook/>} />
-      <Route path='/books/delete/:id' element={<DeleteBook/>} />
-      <Route path='/books/details/:id' element={<ShowBook/>} />
+      <Route path='/books/edit/:id' element={<EditBook />} />
+      <Route path='/books/delete/:id' element={<DeleteBook />} />
+      <Route path='/books/details/:id' element={<ShowBook />} />
+      <Route path='/books/details/:id/discussions' element={<Discussions />} />
       <Route path='/books/details/:id/chapters/:chapterId' element={<ReadChapter />} />
     </Routes>
   )
