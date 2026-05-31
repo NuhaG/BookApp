@@ -1,5 +1,6 @@
 const Review = require("../models/reviewModel");
 const asyncHandler = require("../utils/asyncHandler");
+const redisClient = require("../utils/redisClient");
 
 // Create a review from either /reviews or /books/:bookId/reviews.
 exports.createReview = asyncHandler(async (req, res) => {
@@ -10,6 +11,10 @@ exports.createReview = asyncHandler(async (req, res) => {
   req.body.user = req.user._id;
 
   const newReview = await Review.create(req.body);
+
+  // invalidate trending cache
+  await redisClient.del("books:trending");
+
   res.status(201).json({ success: true, data: newReview });
 });
 
@@ -31,7 +36,7 @@ exports.getAllReviews = asyncHandler(async (req, res) => {
   });
 });
 
-// delete a review 
+// delete a review
 exports.deleteReview = asyncHandler(async (req, res) => {
   const review = await Review.findByIdAndDelete(req.params.id);
 
@@ -39,6 +44,8 @@ exports.deleteReview = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Review not found");
   }
+
+  await redisClient.del("books:trending");
 
   res.status(200).json({
     success: true,
@@ -57,6 +64,8 @@ exports.updateReview = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Review not found");
   }
+
+  await redisClient.del("books:trending");
 
   res.status(200).json({
     success: true,
@@ -89,11 +98,21 @@ exports.getReviewStats = asyncHandler(async (req, res) => {
 
 // Build trending books from recent (last 30 days) review activity.
 exports.getTrendingBooks = asyncHandler(async (req, res) => {
-  // Rank books by recent review volume.
+  const cacheKey = "books:trending";
+
+  // 1. check cache
+  const cached = await redisClient.get(cacheKey);
+  if (cached) {
+    return res.status(200).json(JSON.parse(cached));
+  }
+
+  // 2. compute if no cache
   const trending = await Review.aggregate([
     {
       $match: {
-        createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+        createdAt: {
+          $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        },
       },
     },
     {
@@ -105,7 +124,6 @@ exports.getTrendingBooks = asyncHandler(async (req, res) => {
     },
     { $sort: { reviewCount: -1 } },
     { $limit: 5 },
-    // Join with books collection to fetch book metadata.
     {
       $lookup: {
         from: "books",
@@ -116,8 +134,15 @@ exports.getTrendingBooks = asyncHandler(async (req, res) => {
     },
   ]);
 
-  res.status(200).json({
+  const response = {
     success: true,
     data: { trending },
+  };
+
+  // 3. cache for 5 min
+  await redisClient.set(cacheKey, JSON.stringify(response), {
+    ex: 300,
   });
+
+  res.status(200).json(response);
 });

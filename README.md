@@ -41,6 +41,7 @@ A full-stack MERN application for discovering books, publishing chapters, managi
 - Query utilities for filtering, sorting, field selection, and pagination
 - File upload support for book covers via Multer and Cloudinary
 - Cover images stored remotely in Cloudinary and returned as accessible URLs
+- Redis caching for books listing, queries, and trending books optimization
 
 ---
 
@@ -51,11 +52,12 @@ A full-stack MERN application for discovering books, publishing chapters, managi
 - Node.js
 - Express
 - MongoDB + Mongoose
-- JWT (`jsonwebtoken`)
+- JWT (jsonwebtoken)
 - bcrypt
 - multer
 - cors
 - dotenv
+- redis
 
 ### 🎨 Frontend
 
@@ -70,7 +72,7 @@ A full-stack MERN application for discovering books, publishing chapters, managi
 
 ## 📂 Project Structure
 
-```text
+```
 MERN-BookApp/
 ├── backend/
 │   ├── controllers/
@@ -99,7 +101,7 @@ MERN-BookApp/
 
 ### 🔐 Backend (`backend/.env`)
 
-```env
+```
 MONGO_URI=your_mongodb_connection_string
 PORT=5555
 JWT_SECRET=your_jwt_secret
@@ -108,6 +110,8 @@ CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ALLOWED_ORIGINS=https://book-verse-azure.vercel.app,http://localhost:5173
+UPSTASH_REDIS_REST_URL=your_upstash_redis_rest_url
+UPSTASH_REDIS_REST_TOKEN=your_upstash__redis_rest_token
 ```
 
 > Book cover uploads are stored in Cloudinary. The API saves the Cloudinary image URL in the `coverImg` field on the book document.
@@ -116,7 +120,7 @@ ALLOWED_ORIGINS=https://book-verse-azure.vercel.app,http://localhost:5173
 
 ### 🌐 Frontend (`frontend/.env`)
 
-```env
+```
 VITE_API_URL=http://localhost:5555
 ```
 
@@ -124,16 +128,16 @@ VITE_API_URL=http://localhost:5555
 
 ## ▶️ Running Locally
 
-### Clone The Repo
+### Clone the Repo
 
-```bash
+```
 git clone https://github.com/NuhaG/BookApp.git
 cd BookApp
 ```
 
 ### Backend
 
-```bash
+```
 cd backend
 npm install
 npm run dev
@@ -141,7 +145,7 @@ npm run dev
 
 ### Frontend
 
-```bash
+```
 cd frontend
 npm install
 npm run dev
@@ -151,13 +155,11 @@ npm run dev
 
 ## 📖 Documentation
 
-Detailed backend API documentation is available in [API.md](API.md).
+Detailed backend API documentation is available in `API.md`.
 
 ---
 
 ## 🤝 Contributing
-
-Contributions, bug fixes, and improvements are welcome.
 
 1. Fork the repository
 2. Create a feature branch
