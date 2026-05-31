@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 5555;
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://book-verse-azure.vercel.app/",
+    origin: "https://book-verse-azure.vercel.app",
     credentials: true,
   }),
 );
