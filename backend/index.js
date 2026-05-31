@@ -19,7 +19,12 @@ const PORT = process.env.PORT || 5555;
 
 // middlewares
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://book-verse-azure.vercel.app/",
+    credentials: true,
+  }),
+);
 // Serve locally stored uploads.
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
