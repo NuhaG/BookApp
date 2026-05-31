@@ -116,9 +116,9 @@ const buildBookPayload = (req) => {
   const genre = normalizeGenre(req.body.genre);
   if (genre !== undefined) payload.genre = genre;
 
-  // CLOUDINARY FILE
-  if (req.file?.path) {
-    payload.coverImg = req.file.path;
+  const uploadedCover = getUploadedCoverPath(req);
+  if (uploadedCover) {
+    payload.coverImg = uploadedCover;
   } else if (coverImg !== undefined) {
     payload.coverImg = coverImg;
   }
@@ -146,9 +146,9 @@ const buildBookUpdatePayload = (req) => {
   const genre = normalizeGenre(req.body.genre);
   if (genre !== undefined) payload.genre = genre;
 
-  // CLOUDINARY FILE
-  if (req.file?.path) {
-    payload.coverImg = req.file.path;
+  const uploadedCover = getUploadedCoverPath(req);
+  if (uploadedCover) {
+    payload.coverImg = uploadedCover;
   }
 
   return payload;
@@ -251,6 +251,11 @@ const updateBook = asyncHandler(async (req, res) => {
     runValidators: true,
   });
 
+  // If a new file upload was accepted, remove the old stored asset.
+  if (req.file) {
+    await deleteStoredCover(existingBook.coverImg);
+  }
+
   res.status(200).json({
     success: true,
     message: "Book updated successfully",
@@ -266,6 +271,8 @@ const deleteBook = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Book not found");
   }
+
+  await deleteStoredCover(book.coverImg);
 
   res.status(200).json({
     success: true,

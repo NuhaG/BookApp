@@ -13,7 +13,7 @@ const {
 } = require("../controllers/bookController");
 const { protect, restrictTo } = require("../middleware/auth");
 const { ensureBookOwnerOrAdmin } = require("../middleware/ownership");
-const { uploadCover } = require("../middleware/uploadCover");
+const { uploadCover } = require("../middleware/upload");
 
 // review for nested routes /books/:bid/reviews
 const reviewRouter = require("./reviewRoute");
