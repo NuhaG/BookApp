@@ -2,6 +2,7 @@ const Book = require("../models/bookModel");
 const asyncHandler = require("../utils/asyncHandler");
 const fs = require("fs/promises");
 const path = require("path");
+const cloudinary = require("../utils/cloudinary");
 
 // utility for filter, sort, field limit, paginate from query params
 const APIFeatures = require("../utils/apiFeatures");
@@ -69,10 +70,16 @@ const parseBoolean = (value) => {
   return undefined;
 };
 
-// Resolve the public cover path for locally stored uploads.
+// Resolve the public cover path for uploads (local or Cloudinary).
 const getUploadedCoverPath = (req) => {
   if (!req.file) return undefined;
-  return `/uploads/covers/${req.file.filename}`;
+  // multer-storage-cloudinary and similar storages set `req.file.path` to the URL.
+  return (
+    req.file.path ||
+    req.file.secure_url ||
+    req.file.url ||
+    (req.file.filename ? `/uploads/covers/${req.file.filename}` : undefined)
+  );
 };
 
 // Remove local cover files only when they belong to our upload directory.
@@ -96,9 +103,27 @@ const deleteLocalCover = async (coverPath) => {
   }
 };
 
-// Centralized cleanup for locally stored covers.
+// Centralized cleanup for stored covers (local files or Cloudinary URLs).
 const deleteStoredCover = async (coverPath) => {
-  await deleteLocalCover(coverPath);
+  if (!coverPath || typeof coverPath !== "string") return;
+
+  // If it's a local upload path, remove from disk.
+  if (coverPath.startsWith("/uploads/covers/")) {
+    await deleteLocalCover(coverPath);
+    return;
+  }
+
+  // If it's a Cloudinary URL, attempt to extract public_id and destroy remotely.
+  try {
+    const match = coverPath.match(/upload\/(?:v\d+\/)?(.+)\./);
+    if (match && match[1]) {
+      const publicId = decodeURIComponent(match[1]);
+      await cloudinary.uploader.destroy(publicId, { invalidate: true });
+    }
+  } catch (err) {
+    // Log and continue; don't block operations if remote deletion fails.
+    console.error("Failed to delete remote cover:", err.message || err);
+  }
 };
 
 // Build payload for create requests (supports JSON and multipart/form-data).
