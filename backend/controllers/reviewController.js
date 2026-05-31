@@ -1,6 +1,6 @@
 const Review = require("../models/reviewModel");
 const asyncHandler = require("../utils/asyncHandler");
-const redisClient = require("../utils/redisClient");
+const redis = require("../utils/safeRedis");
 
 // Create a review from either /reviews or /books/:bookId/reviews.
 exports.createReview = asyncHandler(async (req, res) => {
@@ -13,7 +13,7 @@ exports.createReview = asyncHandler(async (req, res) => {
   const newReview = await Review.create(req.body);
 
   // invalidate trending cache
-  await redisClient.del("books:trending");
+  await redis.del("books:trending");
 
   res.status(201).json({ success: true, data: newReview });
 });
@@ -45,7 +45,7 @@ exports.deleteReview = asyncHandler(async (req, res) => {
     throw new Error("Review not found");
   }
 
-  await redisClient.del("books:trending");
+  await redis.del("books:trending");
 
   res.status(200).json({
     success: true,
@@ -65,7 +65,7 @@ exports.updateReview = asyncHandler(async (req, res) => {
     throw new Error("Review not found");
   }
 
-  await redisClient.del("books:trending");
+  await redis.del("books:trending");
 
   res.status(200).json({
     success: true,
@@ -101,7 +101,7 @@ exports.getTrendingBooks = asyncHandler(async (req, res) => {
   const cacheKey = "books:trending";
 
   // 1. check cache
-  const cached = await redisClient.get(cacheKey);
+  const cached = await redis.get(cacheKey);
   if (cached) {
     return res.status(200).json(JSON.parse(cached));
   }
@@ -140,9 +140,7 @@ exports.getTrendingBooks = asyncHandler(async (req, res) => {
   };
 
   // 3. cache for 5 min
-  await redisClient.set(cacheKey, JSON.stringify(response), {
-    ex: 300,
-  });
+  await redis.set(cacheKey, JSON.stringify(response), { ex: 300 });
 
   res.status(200).json(response);
 });

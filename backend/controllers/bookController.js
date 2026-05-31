@@ -3,7 +3,7 @@ const asyncHandler = require("../utils/asyncHandler");
 const fs = require("fs/promises");
 const path = require("path");
 const cloudinary = require("../utils/cloudinary");
-const redisClient = require("../utils/redisClient");
+const redis = require("../utils/safeRedis");
 const CACHE_VERSION_KEY = "books:version";
 
 // utility for filter, sort, field limit, paginate from query params
@@ -183,7 +183,7 @@ const buildBookUpdatePayload = (req) => {
 
 // create new book
 const createBook = asyncHandler(async (req, res) => {
-  await redisClient.incr(CACHE_VERSION_KEY);
+  await redis.incr(CACHE_VERSION_KEY);
 
   const { title, author, publishedYear } = req.body;
 
@@ -223,13 +223,11 @@ const getBooks = asyncHandler(async (req, res) => {
 
   const cacheKey = stableKey(req.query);
 
-  // 1. cache check
-  const cachedData = await redisClient.get(cacheKey);
+  const cachedData = await redis.get(cacheKey);
   if (cachedData) {
     return res.status(200).json(JSON.parse(cachedData));
   }
 
-  // 2. db query
   const total = await Book.countDocuments(finalFilterQuery);
   const totalPages = Math.max(1, Math.ceil(total / limit));
 
@@ -254,8 +252,7 @@ const getBooks = asyncHandler(async (req, res) => {
     data: { books },
   };
 
-  // 3. cache write
-  await redisClient.set(cacheKey, JSON.stringify(response), {ex: 60});
+  await redis.set(cacheKey, JSON.stringify(response), { ex: 60 });
 
   res.status(200).json(response);
 });
@@ -310,7 +307,8 @@ const updateBook = asyncHandler(async (req, res) => {
     await deleteStoredCover(existingBook.coverImg);
   }
 
-  await redisClient.del("books:trending");
+  await redis.incr(CACHE_VERSION_KEY);
+  await redis.del("books:trending");
 
   res.status(200).json({
     success: true,
@@ -332,7 +330,8 @@ const deleteBook = asyncHandler(async (req, res) => {
 
   await deleteStoredCover(book.coverImg);
 
-  await redisClient.del("books:trending");
+  await redis.incr(CACHE_VERSION_KEY);
+  await redis.del("books:trending");
 
   res.status(200).json({
     success: true,
