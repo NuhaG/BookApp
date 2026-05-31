@@ -12,11 +12,11 @@ This backend API supports the MERN Book App with user authentication, book manag
 
 ## File Storage
 
-Book cover uploads are stored locally in `backend/uploads/covers` and served from:
+Book cover uploads are stored in Cloudinary and normalized as public URLs in the book `coverImg` field.
 
-```http
-GET /uploads/covers/<filename>
-```
+If you need to access uploaded covers directly, use the returned Cloudinary URL from the API response.
+
+> In local development, the app may still resolve remote URLs from Cloudinary and local `uploads` paths if present.
 
 ---
 
@@ -212,6 +212,9 @@ Create a new book.
 
 Supports JSON or `multipart/form-data`.
 
+- For file upload, send a `coverImg` file field in `multipart/form-data`.
+- The backend uploads cover images to Cloudinary and saves the returned image URL in `coverImg`.
+
 ```json
 {
   "title": "Dune",
@@ -257,12 +260,17 @@ Update a book you own or update any book as an admin.
 
 ### Body
 
+Supports JSON or `multipart/form-data`.
+
+- To replace a cover image, send a new `coverImg` file field.
+- The previous Cloudinary image will be deleted when a new cover is uploaded.
+
 ```json
 {
   "title": "Dune: Revised",
   "description": "Updated description",
   "genre": ["science-fiction"],
-  "coverImg": "/uploads/covers/new-cover.jpg"
+  "coverImg": "https://res.cloudinary.com/.../image.jpg"
 }
 ```
 

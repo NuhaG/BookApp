@@ -39,8 +39,8 @@ A full-stack MERN application for discovering books, publishing chapters, managi
 - Role-based authorization and ownership guards for books, reviews, threads, and messages
 - Nested routes for reviews, threads, and messages
 - Query utilities for filtering, sorting, field selection, and pagination
-- File upload support for book covers via Multer
-- Public uploads served from `/uploads/covers`
+- File upload support for book covers via Multer and Cloudinary
+- Cover images stored remotely in Cloudinary and returned as accessible URLs
 
 ---
 
@@ -104,9 +104,13 @@ MONGO_URI=your_mongodb_connection_string
 PORT=5555
 JWT_SECRET=your_jwt_secret
 JWT_EXPIRES_IN=7d
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+ALLOWED_ORIGINS=https://book-verse-azure.vercel.app,http://localhost:5173
 ```
 
-> Book cover uploads are stored at `backend/uploads/covers` and served publicly from `/uploads/covers/<filename>`.
+> Book cover uploads are stored in Cloudinary. The API saves the Cloudinary image URL in the `coverImg` field on the book document.
 
 ---
 
