@@ -3,6 +3,8 @@ const asyncHandler = require("../utils/asyncHandler");
 const fs = require("fs/promises");
 const path = require("path");
 const cloudinary = require("../utils/cloudinary");
+const redis = require("../utils/safeRedis");
+const CACHE_VERSION_KEY = "books:version";
 
 // utility for filter, sort, field limit, paginate from query params
 const APIFeatures = require("../utils/apiFeatures");
@@ -181,6 +183,8 @@ const buildBookUpdatePayload = (req) => {
 
 // create new book
 const createBook = asyncHandler(async (req, res) => {
+  await redis.incr(CACHE_VERSION_KEY);
+
   const { title, author, publishedYear } = req.body;
 
   if (!title || !author || !publishedYear) {
@@ -188,7 +192,6 @@ const createBook = asyncHandler(async (req, res) => {
     throw new Error("title, author, publishedYear are required");
   }
 
-  // createdBy is set from the authenticated user (not trusted from client).
   const newBook = await Book.create(buildBookPayload(req));
 
   res.status(201).json({
@@ -202,14 +205,32 @@ const createBook = asyncHandler(async (req, res) => {
 const getBooks = asyncHandler(async (req, res) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 100;
+
   const filterQuery = buildFilterQuery(req.query);
   const textSearchQuery = buildTextSearchQuery(req.query.search);
   const finalFilterQuery = { ...filterQuery, ...textSearchQuery };
 
+  const stableKey = (query) => {
+    const sorted = Object.keys(query)
+      .sort()
+      .reduce((acc, key) => {
+        acc[key] = query[key];
+        return acc;
+      }, {});
+
+    return `books:${JSON.stringify(sorted)}`;
+  };
+
+  const cacheKey = stableKey(req.query);
+
+  const cachedData = await redis.get(cacheKey);
+  if (cachedData) {
+    return res.status(200).json(JSON.parse(cachedData));
+  }
+
   const total = await Book.countDocuments(finalFilterQuery);
   const totalPages = Math.max(1, Math.ceil(total / limit));
 
-  // Build Mongoose query with filtering, sorting, field limiting, and pagination.
   const features = new APIFeatures(Book.find(finalFilterQuery), req.query)
     .sort()
     .limitFields()
@@ -217,7 +238,7 @@ const getBooks = asyncHandler(async (req, res) => {
 
   const books = await features.query;
 
-  res.status(200).json({
+  const response = {
     success: true,
     results: books.length,
     pagination: {
@@ -229,7 +250,11 @@ const getBooks = asyncHandler(async (req, res) => {
       hasPrevPage: page > 1,
     },
     data: { books },
-  });
+  };
+
+  await redis.set(cacheKey, JSON.stringify(response), { ex: 60 });
+
+  res.status(200).json(response);
 });
 
 // get books created by authenticated user
@@ -257,6 +282,8 @@ const getBook = asyncHandler(async (req, res) => {
 
 // patch a book
 const updateBook = asyncHandler(async (req, res) => {
+  await redisClient.incr(CACHE_VERSION_KEY);
+
   const updates = buildBookUpdatePayload(req);
 
   if (!updates || Object.keys(updates).length === 0) {
@@ -276,10 +303,12 @@ const updateBook = asyncHandler(async (req, res) => {
     runValidators: true,
   });
 
-  // If a new file upload was accepted, remove the old stored asset.
   if (req.file) {
     await deleteStoredCover(existingBook.coverImg);
   }
+
+  await redis.incr(CACHE_VERSION_KEY);
+  await redis.del("books:trending");
 
   res.status(200).json({
     success: true,
@@ -290,6 +319,8 @@ const updateBook = asyncHandler(async (req, res) => {
 
 // delete a book
 const deleteBook = asyncHandler(async (req, res) => {
+  await redisClient.incr(CACHE_VERSION_KEY);
+
   const book = await Book.findByIdAndDelete(req.params.id);
 
   if (!book) {
@@ -298,6 +329,9 @@ const deleteBook = asyncHandler(async (req, res) => {
   }
 
   await deleteStoredCover(book.coverImg);
+
+  await redis.incr(CACHE_VERSION_KEY);
+  await redis.del("books:trending");
 
   res.status(200).json({
     success: true,
