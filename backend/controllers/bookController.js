@@ -282,7 +282,7 @@ const getBook = asyncHandler(async (req, res) => {
 
 // patch a book
 const updateBook = asyncHandler(async (req, res) => {
-  await redisClient.incr(CACHE_VERSION_KEY);
+  await redis.incr(CACHE_VERSION_KEY);
 
   const updates = buildBookUpdatePayload(req);
 
@@ -319,7 +319,7 @@ const updateBook = asyncHandler(async (req, res) => {
 
 // delete a book
 const deleteBook = asyncHandler(async (req, res) => {
-  await redisClient.incr(CACHE_VERSION_KEY);
+  await redis.incr(CACHE_VERSION_KEY);
 
   const book = await Book.findByIdAndDelete(req.params.id);
 
