@@ -225,7 +225,13 @@ const getBooks = asyncHandler(async (req, res) => {
 
   const cachedData = await redis.get(cacheKey);
   if (cachedData) {
-    return res.status(200).json(JSON.parse(cachedData));
+    try {
+      const parsed =
+        typeof cachedData === "string" ? JSON.parse(cachedData) : cachedData;
+      return res.status(200).json(parsed);
+    } catch (err) {
+      console.error("Failed to parse cached books value:", err);
+    }
   }
 
   const total = await Book.countDocuments(finalFilterQuery);

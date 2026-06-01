@@ -103,7 +103,14 @@ exports.getTrendingBooks = asyncHandler(async (req, res) => {
   // 1. check cache
   const cached = await redis.get(cacheKey);
   if (cached) {
-    return res.status(200).json(JSON.parse(cached));
+    // cached value may be a JSON string or already an object depending on Redis client
+    try {
+      const parsed = typeof cached === "string" ? JSON.parse(cached) : cached;
+      return res.status(200).json(parsed);
+    } catch (err) {
+      // If parsing fails, log and continue to recompute
+      console.error("Failed to parse cached trending value:", err);
+    }
   }
 
   // 2. compute if no cache
