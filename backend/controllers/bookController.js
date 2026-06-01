@@ -210,7 +210,7 @@ const getBooks = asyncHandler(async (req, res) => {
   const textSearchQuery = buildTextSearchQuery(req.query.search);
   const finalFilterQuery = { ...filterQuery, ...textSearchQuery };
 
-  const stableKey = (query) => {
+  const stableKey = async (query) => {
     const sorted = Object.keys(query)
       .sort()
       .reduce((acc, key) => {
@@ -218,10 +218,11 @@ const getBooks = asyncHandler(async (req, res) => {
         return acc;
       }, {});
 
-    return `books:${JSON.stringify(sorted)}`;
+    const cacheVersion = await redis.get(CACHE_VERSION_KEY);
+    return `books:v${cacheVersion || 0}:${JSON.stringify(sorted)}`;
   };
 
-  const cacheKey = stableKey(req.query);
+  const cacheKey = await stableKey(req.query);
 
   const cachedData = await redis.get(cacheKey);
   if (cachedData) {
